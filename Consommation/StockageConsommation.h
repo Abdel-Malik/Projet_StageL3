@@ -12,7 +12,7 @@
 #include <vector>
 #include <iostream>
 #include <string.h>
-#include "../../IntermediaireG/IntermediaireG.h"
+#include "../Intermediaire/IntermediaireG.h"
 
 #define rhoDiesel (0.85)
 #define CONST_RAPPORT_DIESEL_CO2 (2.65)

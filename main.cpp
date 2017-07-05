@@ -1,7 +1,7 @@
 #include <iostream>
-#include "MDV.h"
-#include "../Gear_shift/GearBoxAI.h"
-#include "../Conso_rejet/Essai/StockageConsommation.h"
+#include "ModeleVehicule/MDV.h"
+#include "BoiteDeVitesse/GearBoxAI.h"
+#include "Consommation/StockageConsommation.h"
 using namespace std;
 
 int main()
@@ -9,17 +9,17 @@ int main()
     MDV vehicule = MDV();
     IntermediaireG* i = vehicule.getI();
     vehicule.fct();
-    GearBoxAI gb = GearBoxAI(i,vehicule.getBSFC());
+    GearBoxAI gb = GearBoxAI(i);
     StockageConsommationGeneral scg = StockageConsommationGeneral(i);
     bool b = false;
-    for(int i =0; i <60; i++){
+    for(int i =0; i <291; i++){
         vehicule.avancer(i);
         vehicule.setGear(gb.optimiserRapport());
-        if(vehicule.getVitesse() > 30){
+        if(vehicule.getVitesseKMh() > 60){
             vehicule.setpAcc(0);
             b = true;
         }
-        if(vehicule.getVitesse() < 14&&b)
+        if(vehicule.getVitesseKMh() < 33.9&&b)
             vehicule.setpAcc(1);
         scg.calculConsommationInstantanee();
     }

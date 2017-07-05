@@ -13,23 +13,29 @@
 #include <string.h>
 #include <math.h>
 
-#include "../Gear_shift/E_ModeConduite.h"
+#include "../BoiteDeVitesse/E_ModeConduite.h"
 
 class IntermediaireG{
 
     /**attributs**/
     //Constantes_véhicule
     public:
-    static const int GEAR_MIN = 1;
-    static const int GEAR_MAX = 12;
+    static const int GEAR_MIN = 0;
+    static const int GEAR_MAX = 6;
 
     static constexpr double VITESSE_MIN = 0;
-    static constexpr double VITESSE_MAX = 178.6;
-    static constexpr double RPM_MIN = 0;
-    static constexpr double RPM_MAX = 8000;
+    static constexpr double VITESSE_MAX = 123.26;
+    static constexpr double PUISSANCE_MIN = 0;
+    static constexpr double PUISSANCE_MAX = 266;
+    static constexpr double COUPLE_MIN = 0;
+    static constexpr double COUPLE_MAX = 1700;
+    static constexpr double RPM_MIN = 800;
+    static constexpr double RPM_MAX = 2500;
     static constexpr double CHARGE_MIN = 0;
     static constexpr double CHARGE_MAX = 1;
-
+    double coeffP[3] = {-0.0001502,0.5648365,-263.93706};
+    double coeffCons[3] = {0.0000352,-0.0985985,257.98788};
+    double maxX = 16641,maxY = 7728.4, maxM = 3930, maxZ=6.563*23.34;
     //Données Véhicule
     private:
     bool ralentiMot;
@@ -39,15 +45,13 @@ class IntermediaireG{
 
     //Interaction Véhicule
     double vitesseVehicule;
+    double rotationMoteur;
     double puissanceMoteur;
     double consommation;
     double chargeMoteur;
     double chargeFrein;
     std::vector<double> vitesseRoues;
     std::vector<double> freinRoues;
-
-    //Interpolation
-    int echAxe;
 
     //autre
     int event = 0;
@@ -56,22 +60,20 @@ class IntermediaireG{
 
     public:
     //Constructeur
-    IntermediaireG(){
-        recuperationDonnees();
-        initRoues();
+    IntermediaireG(int nbRoues, double rayonRoue){
+        ralentiMot = false;
+        nbRoues = nbRoues;
+        for(int i = 0; i < nbRoues ; i++){
+            rayonRoues.push_back(rayonRoue);
+            vitesseRoues.push_back(0);
+            freinRoues.push_back(0);
+        }
     };
-    /*Méthodes publiques*/
 
-    void majDonnees(){
-        recupVitesseRoues();
-    }
     /*getter*/
     //données véhicule
     bool ralentiMoteur(){
-        bool res = true;
-        if(vitesseVehicule > 5)
-            res = false;
-        return res;
+        return ralentiMot;
     };
     int getGear(){
         return currentGear;
@@ -88,11 +90,25 @@ class IntermediaireG{
     double getVitesse(){
         return vitesseVehicule;
     };
+    double getRotationMoteur(){
+        return rotationMoteur;
+    };
+    void setVitesse(double a){
+        vitesseVehicule = a;
+    };
     double getPuissanceMoteur(){
         return puissanceMoteur;
     };
     double getConsommation(){
         return consommation;
+    };
+    double getPuissanceMoteur(double r){
+         return chargeMoteur*(coeffP[0]*r*r+coeffP[1]*r+coeffP[2]);
+    };
+    double getConsommation(double r){
+        double x = r/10;
+        double y = getPuissanceMoteur(r);
+        return 188+208.5*n(3.14*n((x-121)*(x-121),maxX) + 10.3*n((y-278)*(y-278),maxY) -6.5*n((x-145)*(y-271),maxM),maxZ);
     };
     double getChargeMoteur(){
         return chargeMoteur;
@@ -106,17 +122,9 @@ class IntermediaireG{
         return vitesseRoues[i];
     };
 
-    //Interpolation
-    int getEchAxe(){
-        return echAxe;
-    };
-
-    double* getAxeZ(int gear, ModeConduite mode){
-        double* valeurs = new double[echAxe*echAxe];
-        for(int i = 0; i < echAxe*echAxe; i++)
-            valeurs[i] = (((i%echAxe)*(i%echAxe-10))*((i/echAxe)*(i/echAxe-10)))/625.0;
-        return valeurs;
-    };
+    double n(double x, double maxi){
+        return x/maxi;
+    }
 
 
     /*setter*/
@@ -124,64 +132,15 @@ class IntermediaireG{
         freinRoues[i] = chrg;
     };
 
-    /**Méthodes privées**/
-
-    private:
-    void recuperationDonnees(){
-        ralentiMot = false;
-        currentGear = 2;
-        nbRoues = 6;
-        vitesseVehicule = 110;
-        puissanceMoteur = 90;
-        chargeMoteur = .3;
-        chargeFrein = 0;
-        consommation = 430;
-        echAxe = 20;
-    };
-
-    void initRoues(){
-        for(int i = 0; i < nbRoues ; i++){
-            rayonRoues.push_back(0.29545);
-            vitesseRoues.push_back(0);
-            freinRoues.push_back(0);
-        }
-        recupVitesseRoues();
-    }
-
-    void recupVitesseRoues(){
-        event++;
-        for(unsigned int i = 0; i < vitesseRoues.size() ; i++){
-            if(event != 5 && event !=41 && event != 26)
-                vitesseRoues[i] = vitesseVehicule*(1-freinRoues[i])/(rayonRoues[i]*3.6);
-        }
-        if(event != 5 && event != 16 && event !=18 &&  event != 26)
-            vitesseVehicule -= 0.01*vitesseVehicule*chargeFrein;
-        if(event == 4){
-            std::cout << "Event 1 -- freinage" << std:: endl;
-            chargeFrein = 1;
-            for(unsigned int i = 0; i < vitesseRoues.size() ; i++){
-                vitesseRoues[i] = vitesseVehicule*(1-chargeFrein)/(rayonRoues[i]*3.6);
-                freinRoues[i] = chargeFrein;
-            }
-        }
-        if(event == 15){
-            std::cout << "Event 1 -- relacher" << std:: endl;
-            chargeFrein = 0.52;
-            for(unsigned int i = 0; i < vitesseRoues.size() ; i++){
-                vitesseRoues[i] += 2;
-            }
-        }
-        if(event == 25){
-            std::cout << "Event 2 -- appuie2" << std:: endl;
-            chargeFrein = 0.9;
-            for(unsigned int i = 0; i < vitesseRoues.size() ; i++){
-                vitesseRoues[i] -= 5.1;
-            }
-        }
-        if(event == 40){
-            std::cout << "Event 2 -- lâcher" << std:: endl;
-            chargeFrein = 0;
-        }
+    void majMDV(bool a, int g, double v, double r, double p, double cM, double cF, double conso){
+        ralentiMot = a;
+        currentGear = g;
+        vitesseVehicule = v;
+        rotationMoteur =r;
+        puissanceMoteur = p;
+        chargeMoteur = cM;
+        chargeFrein = cF;
+        consommation = conso;
     }
 };
 #endif
