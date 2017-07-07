@@ -35,7 +35,9 @@ class IntermediaireG{
     static constexpr double CHARGE_MAX = 1;
     double coeffP[3] = {-0.0001502,0.5648365,-263.93706};
     double coeffCons[3] = {0.0000352,-0.0985985,257.98788};
-    double maxX = 16641,maxY = 7728.4, maxM = 3930, maxZ=6.563*23.34;
+    double A[3] = {0.000009,-0.174561,211.91476};
+    double rapportTransmission[7] = {4.24,3.36,1.91,1.42,1,0.72,0.62}; // gear : R - 1 - 2 - 3 - 4 - 5 - 6
+
     //Données Véhicule
     private:
     bool ralentiMot;
@@ -87,6 +89,9 @@ class IntermediaireG{
     };
 
     //interaction véhicule
+    double getRapportBoiteDeVitesse(int rapport){
+        return rapportTransmission[rapport];
+    }
     double getVitesse(){
         return vitesseVehicule;
     };
@@ -106,9 +111,8 @@ class IntermediaireG{
          return chargeMoteur*(coeffP[0]*r*r+coeffP[1]*r+coeffP[2]);
     };
     double getConsommation(double r){
-        double x = r/10;
         double y = getPuissanceMoteur(r);
-        return 188+208.5*n(3.14*n((x-121)*(x-121),maxX) + 10.3*n((y-278)*(y-278),maxY) -6.5*n((x-145)*(y-271),maxM),maxZ);
+        return A[0]*(r*r)+A[1]*y+A[2];
     };
     double getChargeMoteur(){
         return chargeMoteur;

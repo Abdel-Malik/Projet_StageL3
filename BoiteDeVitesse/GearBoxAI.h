@@ -22,11 +22,10 @@
 class GearBoxAI{
 
     //--**attributs**--//
-    enum ModeConduite mode = ModeConduite::ECO;
+    enum ModeConduite mode = ModeConduite::PERF;
     std::vector<double> demultiplication;
     IntermediaireG* informations;
     double rotation_moteur, rotationT, puissance, consommation;
-    double rapportTransmission[7] = {4.24,3.36,1.91,1.42,1,0.72,0.62}; // gear : R - 1 - 2 - 3 - 4 - 5 - 6 A récupérer au final par intermediaire
     bool marcheArriere;
     int gear;
 
@@ -35,8 +34,7 @@ class GearBoxAI{
     //Constructeurs
     GearBoxAI(IntermediaireG* i){
         informations = i;
-        for(int i = 0 ; i <(informations->GEAR_MAX-informations->GEAR_MIN); i++)
-            demultiplication.push_back(rapportTransmission[i]);
+        recuperationDesRapportsDeTransmissions();
         recuperationDonnees();
     };
 
@@ -46,7 +44,7 @@ class GearBoxAI{
     int optimiserRapport(){
         recuperationDonnees();
         rapportCoherent();
-        if((mode == ModeConduite::ECO && chargeMoteur() <= 1.7) || (mode == ModeConduite::PERF && chargeMoteur() < 0.3)){
+        if((mode == ModeConduite::ECO && chargeMoteur() <= 1.7) || (mode == ModeConduite::PERF && chargeMoteur() < -0.3)){
             optimiserConsommation();
         }else{
             optimiserPuissance();
@@ -62,6 +60,10 @@ class GearBoxAI{
 
     private:
 
+    void recuperationDesRapportsDeTransmissions(){
+        for(int i = 0 ; i <=(informations->GEAR_MAX-informations->GEAR_MIN); i++)
+            demultiplication.push_back(informations->getRapportBoiteDeVitesse(i));
+    }
     void rapportCoherent(){
         double gearT = gear;
         while(nouvelleRotationMoteur(gearT) > informations->RPM_MAX && gearT < 6)
@@ -116,6 +118,7 @@ class GearBoxAI{
      */
     //Appel à une boucle externe
     void optimiserPuissance(){
+        puissance = puissanceCourante();
         int ng = boucleMeilleurPuissance(-1);
         if(ng == gear)
             ng = boucleMeilleurPuissance(1);
@@ -147,11 +150,13 @@ class GearBoxAI{
         rotationT = nouvelleRotationMoteur(gearT);
         while(gearT > informations->GEAR_MIN && gearT <= informations->GEAR_MAX && (rotationT >= informations->RPM_MIN && rotationT <= informations->RPM_MAX)){
             pCalculee = puissanceTheorique();
+            std::cout << "pour g = "<<gearT<<" => "<<rotationT<<" pC = "<<pCalculee<<" | " << "cur'G "<<gear<<" => "<<rotation_moteur<<" p = " << puissance << std::endl;
             if(puissance < pCalculee){
                 ng = gearT;
                 puissance = pCalculee;
             }
             gearT += delta;
+            rotationT = nouvelleRotationMoteur(gearT);
         }
         return ng;
     };
@@ -167,8 +172,7 @@ class GearBoxAI{
         int gearT = gear+delta;
         int ng = gear;
         rotationT = nouvelleRotationMoteur(gearT);
-            std::cout << "roT : " << rotationT << std::endl;
-        while(gearT > informations->GEAR_MIN && gearT < informations->GEAR_MAX && (rotationT >= informations->RPM_MIN && rotationT <= informations->RPM_MAX)){
+        while(gearT > informations->GEAR_MIN && gearT <= informations->GEAR_MAX && (rotationT >= informations->RPM_MIN && rotationT <= informations->RPM_MAX)){
             consoCalculee = consommationTheorique();
             std::cout << "pour g = "<<gearT<<" => "<<rotationT<<" cC = "<<consoCalculee<<" | " << "cur'G "<<gear<<" => "<<rotation_moteur<<" conso = " << consommation << std::endl;
             if(consommation > consoCalculee){

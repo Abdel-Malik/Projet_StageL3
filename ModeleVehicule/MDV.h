@@ -23,7 +23,7 @@ class MDV
     double rapportTransmission[7] = {4.24,3.36,1.91,1.42,1,0.72,0.62}; // gear : R - 1 - 2 - 3 - 4 - 5 - 6
     double plageVitesse[7][2] = {{0,0},{1.643,6.318},{2.89,11.114},{3.887,14.949},{5.519,21.227},{7.665,29.482},{8.902,34.238}};
 
-    double maxX = 16641,maxY = 7728.4, maxM = 3930, maxZ=6.563*23.34;
+    double A[3] = {0.000009,-0.174561,211.91476};
 
     //moteur
     Engine moteur;
@@ -67,9 +67,8 @@ class MDV
             return moteur.puissanceFournie(pAcc);
         }
         double getConsommationMoteur(double rotation){
-            double x = rotation/10;
             double y = getPuissanceMoteur();
-            return 188+208.5*n(3.14*n((x-121)*(x-121),maxX) + 10.3*n((y-278)*(y-278),maxY) -6.5*n((x-145)*(y-271),maxM),maxZ);
+            return A[0]*(rotation*rotation)+A[1]*y+A[2];
         }
 
         double getVitesse_vehicule(){
