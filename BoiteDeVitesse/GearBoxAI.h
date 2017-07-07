@@ -22,7 +22,7 @@
 class GearBoxAI{
 
     //--**attributs**--//
-    enum ModeConduite mode = ModeConduite::PERF;
+    enum ModeConduite mode = ModeConduite::ECO;
     std::vector<double> demultiplication;
     IntermediaireG* informations;
     double rotation_moteur, rotationT, puissance, consommation;
