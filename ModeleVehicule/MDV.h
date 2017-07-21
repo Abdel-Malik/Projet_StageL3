@@ -22,8 +22,7 @@ class MDV
     double rendementTransmission = 0.92;
     double rapportTransmission[7] = {4.24,3.36,1.91,1.42,1,0.72,0.62}; // gear : R - 1 - 2 - 3 - 4 - 5 - 6
     double plageVitesse[7][2] = {{0,0},{1.643,6.318},{2.89,11.114},{3.887,14.949},{5.519,21.227},{7.665,29.482},{8.902,34.238}};
-
-    double A[3] = {0.000009,-0.174561,211.91476};
+    double coefficientEquation[5] = {0.000000002351,10422.766,-0.0000069,-0.0094361,207.25751};
 
     //moteur
     Engine moteur;
@@ -47,9 +46,9 @@ class MDV
 
     public:
         MDV(){
-            double a[3] = {-0.0001502,0.5648365,-263.93706};
-            double b[3] = {0.0000352,-0.0985985,257.98788};
-            moteur = Engine(a,b);
+            double coeffCouple[4] = {0.0000002,-0.0015774,2.8671445,191.44755};
+            double coeffConso[3] = {0.0000304,-0.0812751,243.36373};
+            moteur = Engine(coeffCouple,coeffConso);
         }
 
         void fct(){
@@ -66,9 +65,12 @@ class MDV
         double getPuissanceMoteur(){
             return moteur.puissanceFournie(pAcc);
         }
+        double getCoupleMoteur(){
+            return moteur.coupleFourni(pAcc);
+        }
         double getConsommationMoteur(double rotation){
-            double y = getPuissanceMoteur();
-            return A[0]*(rotation*rotation)+A[1]*y+A[2];
+            double y = getCoupleMoteur();
+            return coefficientEquation[0]*(rotation*rotation*rotation)+coefficientEquation[1]*(1/(rotation+1))+coefficientEquation[2]*rotation*y+coefficientEquation[3]*y+coefficientEquation[4];
         }
 
         double getVitesse_vehicule(){

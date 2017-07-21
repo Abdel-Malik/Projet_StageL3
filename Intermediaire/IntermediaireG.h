@@ -20,8 +20,10 @@ class IntermediaireG{
     /**attributs**/
     //Constantes_véhicule
     public:
+    static constexpr double M_PI = 3.1415926;
     static const int GEAR_MIN = 0;
     static const int GEAR_MAX = 6;
+    static const int ALPHA = 1.2;
 
     static constexpr double VITESSE_MIN = 0;
     static constexpr double VITESSE_MAX = 123.26;
@@ -33,9 +35,9 @@ class IntermediaireG{
     static constexpr double RPM_MAX = 2500;
     static constexpr double CHARGE_MIN = 0;
     static constexpr double CHARGE_MAX = 1;
-    double coeffP[3] = {-0.0001502,0.5648365,-263.93706};
-    double coeffCons[3] = {0.0000352,-0.0985985,257.98788};
-    double A[3] = {0.000009,-0.174561,211.91476};
+    double coeffCouple[4] = {0.0000002,-0.0015774,2.8671445,191.44755};
+    double coeffConso[3] = {0.0000304,-0.0812751,243.36373};
+    double coefficientEquation[5] = {0.000000002351,10422.766,-0.0000069,-0.0094361,207.25751};
     double rapportTransmission[7] = {4.24,3.36,1.91,1.42,1,0.72,0.62}; // gear : R - 1 - 2 - 3 - 4 - 5 - 6
 
     //Données Véhicule
@@ -102,17 +104,33 @@ class IntermediaireG{
         vitesseVehicule = a;
     };
     double getPuissanceMoteur(){
-        return puissanceMoteur;
+        return puissanceMoteur/1000;
     };
     double getConsommation(){
         return consommation;
     };
-    double getPuissanceMoteur(double r){
-         return chargeMoteur*(coeffP[0]*r*r+coeffP[1]*r+coeffP[2]);
+    double getConsoRalenti(){
+        return 3.48;
     };
+
+    //kW
+    double getPuissanceMoteur(double r){
+         return ((M_PI/30)*r*getCoupleMoteur(r))/1000;
+    };
+    double getCoupleMoteur(double r){
+        return chargeMoteur*calculPolynome(r,coeffCouple);
+    };
+
     double getConsommation(double r){
+        double y = getCoupleMoteur(r);
+        return coefficientEquation[0]*(r*r*r)+coefficientEquation[1]*(1/(r+1))+coefficientEquation[2]*r*y+coefficientEquation[3]*y+coefficientEquation[4];
+    };
+    double consoAvecCoeff(double r){
         double y = getPuissanceMoteur(r);
-        return A[0]*(r*r)+A[1]*y+A[2];
+        double yTh = y/chargeMoteur;
+        double conso = coefficientEquation[0]*(r*r)+coefficientEquation[1]*y+coefficientEquation[2];
+        double consoTh = coefficientEquation[0]*(r*r)+coefficientEquation[1]*yTh+coefficientEquation[2];
+        return ((conso)*(1+ALPHA*(1-((coeffCouple[0]*r*r+coeffCouple[1]*r+coeffCouple[2])/consoTh))));
     };
     double getChargeMoteur(){
         return chargeMoteur;
@@ -145,6 +163,16 @@ class IntermediaireG{
         chargeMoteur = cM;
         chargeFrein = cF;
         consommation = conso;
+    }
+
+    double calculPolynome(double val, double coeffs[]){
+        double res = 0;
+        double x = 1;
+        for(int i = sizeof(coeffs)-1; i>=0;i--){
+            res += (x*coeffs[i]);
+            x = x*val;
+        }
+        return res;
     }
 };
 #endif

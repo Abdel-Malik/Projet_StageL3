@@ -13,9 +13,9 @@ class Engine
     double M_PI = 3.1415926;
     //--
     double CONSO_RALENTI = 3.46; // l/h
-    double RALENTI_MIN = 580;
-    double ACTIVATION_RALENTI = 615;
-    double ROT_MIN = 650; // (= RALENTI_MAX)
+    double RALENTI_MIN = 620;
+    double ACTIVATION_RALENTI = 710;
+    double ROT_MIN = 800; // (= RALENTI_MAX)
     double ROT_MAX = 2500;
 
     //variables
@@ -23,7 +23,7 @@ class Engine
     public:
     bool activationRalenti = false;
     double omega = 0; // tr/min
-    double coeffMoindreCarreP[3];
+    double coeffMoindreCarreC[4];
     double coeffMoindreCarreCons[3];
     bool fonctionne = false; //permet de savoir si le moteur ne fonctionne plus (éteint <=> calage)
     bool rupteur = false;
@@ -31,11 +31,12 @@ class Engine
     public:
         Engine(){
         };
-        Engine(double coeffP[], double coeffCons[]){
+        Engine(double coeffC[], double coeffCons[]){
             for(int i = 0; i <3 ; i++){
-                coeffMoindreCarreP[i] = coeffP[i];
+                coeffMoindreCarreC[i] = coeffC[i];
                 coeffMoindreCarreCons[i] = coeffCons[i];
             }
+            coeffMoindreCarreC[3] = coeffC[3];
 
         }
 
@@ -72,7 +73,7 @@ class Engine
         double puissanceFournie(double coeff){
             double res = 0;
             if(fonctionne && accelerationB() && !rupteur)
-                res = coeff*(coeffMoindreCarreP[0]*omega*omega+coeffMoindreCarreP[1]*omega+coeffMoindreCarreP[2]);
+                res = (omega*(M_PI/30)*coupleFourni(coeff));
             if(res < 0){
                 res = 12.085;
             }
@@ -80,11 +81,11 @@ class Engine
         }
         //N.m
         double coupleFourni(double coeff){
-            return (30*puissanceFournie(coeff))/(omega*M_PI);
+            return coeff*calculPolynome(omega,coeffMoindreCarreC);
         }
         //g/kW.h
         double essenceConsommee(){
-            return coeffMoindreCarreCons[0]*omega*omega+coeffMoindreCarreCons[1]*omega+coeffMoindreCarreCons[2];
+            return calculPolynome(omega,coeffMoindreCarreCons);
         }
         void setAcceleration(double acc){
             if(acc){
@@ -119,6 +120,16 @@ class Engine
 
     bool accelerationB(){
         return (acceleration == 0);
+    }
+
+    double calculPolynome(double val, double coeffs[]){
+        double res = 0;
+        double x = 1;
+        for(int i = sizeof(coeffs)-1; i>=0;i--){
+            res += (x*coeffs[i]);
+            x = x*val;
+        }
+        return res;
     }
 
 };

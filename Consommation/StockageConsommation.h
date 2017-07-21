@@ -12,7 +12,7 @@
 #include <vector>
 #include <iostream>
 #include <string.h>
-#include "../Intermediaire/IntermediaireG.h"
+#include "../Intermediaire/IntermediaireG.h"//<>
 
 #define rhoDiesel (0.85)
 #define CONST_RAPPORT_DIESEL_CO2 (2.65)
@@ -82,9 +82,9 @@ class StockageConsommationGeneral{
 
     //-**Attributs**-//
     vector<StockageConsommationInstantanee> sci; //si l'intérêt de retenir toutes les sci est discuté. Il est possible d'employer vector comme une pile. dans ce cas "indexDebut" sera toujours 0 et "nbStock non lu" sera toujours vector.size()
-    double consMoyenne, vitesse, rejetCO2;
+    double consMoyenne, vitesse, rejetCO2, consoRalenti;
     int indexDebut, nbStockNonLu;
-    IntermediaireG* intermediaire;
+    IntermediaireG* intermediaire;//<>
 
     //-**Méthodes**-//
     public:
@@ -96,6 +96,7 @@ class StockageConsommationGeneral{
         indexDebut = 0;
         nbStockNonLu = 0;
         rejetCO2 = 0;
+        consoRalenti = consommationRalenti();
     };
 
     /*Méthodes*/
@@ -127,10 +128,13 @@ class StockageConsommationGeneral{
     //on modifie les indices de parcours pour la moyenne
     //on calcule et stocke Q : la consommation en (l/h)
     void calculConsommationInstantanee(){
-        sci.push_back(StockageConsommationInstantanee(intermediaire->getVitesse()*3.6,intermediaire->ralentiMoteur()));
+        bool ralenti = ralentiMoteur();
+        sci.push_back(StockageConsommationInstantanee(vitesseVehicule()*3.6,ralenti));
         ajoutStockage();
-
-        sci[sci.size()-1].setQ(((intermediaire->getPuissanceMoteur()))*(intermediaire->getConsommation())/(1000*rhoDiesel));
+        if(ralenti)
+            sci[sci.size()-1].setQ(consoRalenti);
+        else
+            sci[sci.size()-1].setQ((puissanceMoteur()*consommation())/(1000*rhoDiesel));
         sci[sci.size()-1].affichageConsommationInstantanee();
     }
 
@@ -195,6 +199,27 @@ class StockageConsommationGeneral{
     void StockLu(int k){    //ajout à faire ici à la fin
         nbStockNonLu -= k;
         indexDebut +=k;
+    }
+
+    private:
+
+    /* Fonction lié à l'utilisation d'une classe intermediaire. A remplacer par les fonction de récupération de ces même données au sien du simulateurs*/
+    double puissanceMoteur(){
+        return intermediaire->getPuissanceMoteur();
+    }
+    double consommation(){
+        return intermediaire->getConsommation();
+    }
+
+    //m/s
+    double vitesseVehicule(){
+        return intermediaire->getVitesse();
+    }
+    bool ralentiMoteur(){
+        return intermediaire->ralentiMoteur();
+    }
+    double consommationRalenti(){
+        return intermediaire->getConsoRalenti();
     }
 };
 
