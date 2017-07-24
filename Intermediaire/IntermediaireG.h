@@ -77,32 +77,32 @@ class IntermediaireG{
     /*-----getter-----*/
     //données véhicule
     /** \brief Retourner si le moteur est au ralenti
-     * \param[out] ralentiMot le boolean (true) si le moteur est au ralenti, (false) sinon.
+     * \return Un boolean (true) si le moteur est au ralenti, (false) sinon.
      */
     bool ralentiMoteur(){
         return ralentiMot;
     };
     /** \brief Retourner le rapport courant
-     * \param[out] currentGear le rapport actuellement utilisé
+     * \return Le rapport actuellement utilisé
      */
     int getGear(){
         return currentGear;
     };
     /** \brief Retourner le mode d'utilisation de la boîte de vitesse
-     * \param[out] mode L'élément "ModeConduite" utilisé.
+     * \return L'élément "ModeConduite" utilisé.
      */
     ModeConduite getMode(){
         return mode;
     };
     /** \brief Retourner le nombre de roue du véhicule
-     * \param[out] nbRoues le nombre de roues
+     * \return le nombre de roues
      */
     int getNbRoues(){
         return nbRoues;
     };
 
     /** \brief Retourner le rayon de la roue (i) du véhicule
-     * \param[out] rayonRoues[i] Le rayon de la roue 'en mètre'
+     * \return Le rayon de la roue 'en mètre'
      */
     double getRayonRoues(int i){
         return rayonRoues[i];
@@ -111,35 +111,35 @@ class IntermediaireG{
     //interaction véhicule
     /** \brief Retourner le rapport de conversion de la vitesse de rotation (avant-après) la boîte de vitesse
      * \param[in] le rapport de vitesse dont l'on veut connaître le ratio.
-     * \param[out] rapportTransmission[rapport] le coefficient du rapport (vitesse_moteur / vitesse_roue)
+     * \return Le coefficient du rapport (vitesse_moteur / vitesse_roue)
      */
     double getRapportBoiteDeVitesse(int rapport){
         return rapportTransmission[rapport];
     }
 
     /** \brief Retourner la vitesse du véhicule
-     * \param[out] vitesseVehicule la vitesse du véhicule 'en mètre/seconde'
+     * \return La vitesse du véhicule 'en mètre/seconde'
      */
     double getVitesse(){
         return vitesseVehicule;
     };
 
     /** \brief Retourne la vitesse de la roue
-     * \param[out] vitesseRoues[i] la vitesse de la roue 'en ?WAIT'
+     * \Return La vitesse de la roue 'en ?WAIT'
      */
     double getVitesseAngulaire(int i){
         return vitesseRoues[i];
     };
 
     /** \brief Retourner la vitesse de rotation du moteur
-     * \param[out] rotationMoteur la vitesse du moteur 'en tour/minute'
+     * \Return La vitesse du moteur 'en tour/minute'
      */
     double getRotationMoteur(){
         return rotationMoteur;
     };
 
     /** \brief Retourner la puissance fourni parle moteur
-     * \param[out] P la puissance moteur 'en kW'
+     * \return La puissance moteur 'en kW'
      */
     double getPuissanceMoteur(){
         return puissanceMoteur/1000;
@@ -156,7 +156,7 @@ class IntermediaireG{
 
     /** \brief calcul la puissance théorique du moteur en fonction du régime
      * \param[in] Régime moteur 'en tour/minute'
-     * \param[out] P la puissance moteur 'en kW'
+     * \return La puissance moteur 'en kW'
      */
     double getPuissanceMoteur(double r){
          return ((M_PI/30)*r*getCoupleMoteur(r))/1000;
@@ -164,7 +164,7 @@ class IntermediaireG{
 
     /** \brief calcul le couple théorique du moteur en fonction du régime
      * \param[in] Régime moteur 'en tour/minute'
-     * \param[out] T le couple moteur 'en N.m'
+     * \return Le couple moteur 'en N.m'
      */
     double getCoupleMoteur(double r){
         return chargeMoteur*calculPolynome(r,coeffCouple);
@@ -172,7 +172,7 @@ class IntermediaireG{
 
     /** \brief calcul la consommation théorique du moteur en fonction du régime
      * \param[in] Régime moteur 'en tour/minute'
-     * \param[out] C la consommation spécifique'en g/kW.h'
+     * \return La consommation spécifique'en g/kW.h'
      */
     double getConsommation(double r){
         double y = getCoupleMoteur(r);
@@ -190,14 +190,14 @@ class IntermediaireG{
     };
 
     /** \brief Retourne une valeur de l'appuie sur la pédale d'accélération
-     * \param[out] chargeMoteur une valeur dans l'intervalle [0 ; 1]
+     * \return Une valeur dans l'intervalle [0 ; 1]
      */
     double getChargeMoteur(){
         return chargeMoteur;
     };
 
     /** \brief Retourne une valeur de l'appuie sur la pédale de frein
-     * \param[out] chargeFrein une valeur dans l'intervalle [0 ; 1]
+     * \return Une valeur dans l'intervalle [0 ; 1]
      */
     double getChargeFrein(){
         return chargeFrein;
@@ -227,7 +227,7 @@ class IntermediaireG{
      * Le polynôme est représenté par un tableau de coefficients du degré n au degré 0.
      * \param[in] val La variable pour laquelle on calcul la valeur du polynôme
      * \param[in] coeffs un tableau contenant les coefficients du polynôme
-     * \param[out] res la valeur du polynôme
+     * \return La valeur du polynôme
      */
     double calculPolynome(double val, double coeffs[]){
         double res = 0;

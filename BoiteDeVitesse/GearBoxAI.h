@@ -1,7 +1,7 @@
 /**-----------------------------------------------
  * \author Abdel-Malik Bouhassoun
  * \date 26 Mai 2017
- * \file Ce header contient l'implémentation d'une boîte de vitesse
+ * \file [GearBoxAI.h]Ce header contient l'implémentation d'une boîte de vitesses
  */
 
 #ifndef _GearAI_h_
@@ -36,14 +36,19 @@ class GearBoxAI{
 
     /*Méthodes publiques*/
 
-
+    /** \brief Fonction global réalisant l'appel de sous-fonctions
+    * le but final est d'obtenir la meilleur vitesse en fonction du mode effectif
+    * Cas spécial : Si la marche arrière est enclenchée, aucun test n'est effectué
+    */
     int optimiserRapport(){
         recuperationDonnees();
-        rapportCoherent();
-        if((mode == ModeConduite::ECO && chargeMoteur() <= 0.95) || (mode == ModeConduite::PERF && chargeMoteur() < 0.2)){
-            optimiserConsommation();
-        }else{
-            optimiserPuissance();
+        if(!marcheArriere){}
+            rapportCoherent();
+            if((mode == ModeConduite::ECO && chargeMoteur() <= 0.95) || (mode == ModeConduite::PERF && chargeMoteur() < 0.2)){
+                optimiserConsommation();
+            }else{
+                optimiserPuissance();
+            }
         }
         return gear;
     };
@@ -56,10 +61,17 @@ class GearBoxAI{
 
     private:
 
+    /** \brief Copie les 'rapports de transmissions' dans un vector
+    * l'élément [0] correspond au rapport de la marche arrière
+    */
     void recuperationDesRapportsDeTransmissions(){
         for(int i = 0 ; i <=(informations->GEAR_MAX-informations->GEAR_MIN); i++) //<>
             demultiplication.push_back(informations->getRapportBoiteDeVitesse(i));
     }
+
+    /** \brief Vérifie que la vitesse engagée entraine une rotation moteur dans la plage de rotation dans laquelle il est foncitonnel.
+    * Si la rotation moteur devient trop faible/importante un changement de vitesse sera opéré avant tout autre test.
+    */
     void rapportCoherent(){
         double gearT = gear;
         while(nouvelleRotationMoteur(gearT) > informations->RPM_MAX && gearT < 6) // <>
@@ -137,7 +149,7 @@ class GearBoxAI{
 
     /** \brief Retourner le rapport optimal
      * \param [in] delta incrémente/décrémente le rapport de vitesse testé
-     * \param[out] ng le rapport[supérieur/inférieur] optimal
+     * \return Le rapport[supérieur/inférieur] optimal
      */
     //Si aucun rapport optimal n'est trouvé, le rapport courant est retourné
     int boucleMeilleurPuissance(int delta){
@@ -161,7 +173,7 @@ class GearBoxAI{
 
     /** \brief Retourner le rapport optimal
      * \param[in] delta incrémente/décrémente le rapport de vitesse testé
-     * \param[out] ng rapport[supérieur/inférieur] optimal
+     * \return Le rapport[supérieur/inférieur] optimal
      */
     //Si aucun rapport optimal n'est trouvé, le rapport courant est retourné
     int boucleMeilleurConso(int delta){

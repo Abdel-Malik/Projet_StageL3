@@ -23,7 +23,10 @@ using namespace std;
 class StockageConsommationInstantanee{
 
     //--**Attributs**--//
-	double Q, speed;
+    /** \brief Q est un 'double' contenant la consommation 'en litre par heure'
+    */
+	double Q;
+	double speed;
     bool ralenti;
 
     //-**Méthodes**-//
@@ -54,7 +57,9 @@ class StockageConsommationInstantanee{
     }
 
     /*Getter*/
-    //Q est une valeur de consommation en L/h
+    /** \brief Retourne la consommation instantanée du véhicule.
+     * \return Un 'double' contenant la consommation 'en litre par heure'
+    */
     double getQ(){
         return Q;
     }
@@ -102,9 +107,9 @@ class StockageConsommationGeneral{
     /*Méthodes*/
 
     /** \brief Réaliser une moyenne de la consommation du véhicule
-     */
-    //on retransforme les anciennes moyennes en somme de valeurs (de poids 1)
-    //on ajoute les nouveaux relevés et on divise de manière à obtenir une nouvelle moyenne
+    * on retransforme les anciennes moyennes en somme de valeurs (de poids 1)
+    * on ajoute les nouveaux relevés et on divise de manière à obtenir une nouvelle moyenne
+    */
     void calculConsommationMoyenne(){
         double moyenne = consMoyenne*(indexDebut+1);
         double v = vitesse*(indexDebut+1);
@@ -123,10 +128,10 @@ class StockageConsommationGeneral{
 
 
     /** \brief Réaliser un calcul de la consommation du véhicule (à un instant t)
-     */
-    //on récupère les informations nécessaire à la création d'un SCI
-    //on modifie les indices de parcours pour la moyenne
-    //on calcule et stocke Q : la consommation en (l/h)
+     * on récupère les informations nécessaire à la création d'un SCI
+     * on modifie les indices de parcours pour la moyenne
+     * on calcule et stocke Q : la consommation en (l/h)
+    */
     void calculConsommationInstantanee(){
         bool ralenti = ralentiMoteur();
         sci.push_back(StockageConsommationInstantanee(vitesseVehicule()*3.6,ralenti));
@@ -138,7 +143,7 @@ class StockageConsommationGeneral{
         sci[sci.size()-1].affichageConsommationInstantanee();
     }
 
-    /** \brief affichage de la consommation mdu véhicule
+    /** \brief affichage de la consommation du véhicule
      */
     //Dans un premier temps l'affichage ce fait en texte sur la sortie standard.
     void affichageConsommationMoyenne(){
@@ -203,7 +208,7 @@ class StockageConsommationGeneral{
 
     private:
 
-    /* Fonction lié à l'utilisation d'une classe intermediaire. A remplacer par les fonction de récupération de ces même données au sien du simulateurs*/
+    /* Fonction lié à l'utilisation d'une classe intermediaire */
     double puissanceMoteur(){
         return intermediaire->getPuissanceMoteur();
     }
