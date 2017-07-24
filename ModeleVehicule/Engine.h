@@ -109,13 +109,13 @@ class Engine
         }
 
         double puissanceResistante(double coeff){
-            return 0;
+            return 0*coeff;
         }
     protected:
     private:
 
         double augmentationRegime(double coeff){
-            return 0;
+            return 0*coeff;
         }
 
     bool accelerationB(){

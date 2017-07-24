@@ -1,7 +1,7 @@
 /**-----------------------------------------------
  * \author Abdel-Malik Bouhassoun
  * \date 26 Mai 2017
- * \file Ce header contient ...todo...
+ * \file Ce header contient l'implémentation d'une boîte de vitesse
  */
 
 #ifndef _GearAI_h_
@@ -15,14 +15,10 @@
 #include "Point.h"
 #include "../Intermediaire/IntermediaireG.h" //<>
 
-/** \def Constante PI
- */
-#define M_PI (3.1415926)
-
 class GearBoxAI{
 
     //--**attributs**--//
-    enum ModeConduite mode = ModeConduite::ECO;
+    enum ModeConduite mode;
     std::vector<double> demultiplication;
     IntermediaireG* informations; // <>
     double rotation_moteur, rotationT, puissance, consommation;
@@ -97,6 +93,7 @@ class GearBoxAI{
      */
     void recuperationDonnees(){
         gear = informations->getGear();
+        mode = informations->getMode();
         if(gear == 0)
             marcheArriere = true;
         else
@@ -108,7 +105,7 @@ class GearBoxAI{
 
 
     /** \brief Modifier le rapport de vitesse courant du véhicule
-     * \param[in] gear Le rapport de vitesse à appliquer
+     * \param[in] ng Le rapport de vitesse à appliquer
      */
     void changeGear(int ng){
         gear = ng;
@@ -140,7 +137,7 @@ class GearBoxAI{
 
     /** \brief Retourner le rapport optimal
      * \param [in] delta incrémente/décrémente le rapport de vitesse testé
-     * \param[out] Le rapport[supérieur/inférieur] optimal
+     * \param[out] ng le rapport[supérieur/inférieur] optimal
      */
     //Si aucun rapport optimal n'est trouvé, le rapport courant est retourné
     int boucleMeilleurPuissance(int delta){
@@ -164,7 +161,7 @@ class GearBoxAI{
 
     /** \brief Retourner le rapport optimal
      * \param[in] delta incrémente/décrémente le rapport de vitesse testé
-     * \param[out] Le rapport[supérieur/inférieur] optimal
+     * \param[out] ng rapport[supérieur/inférieur] optimal
      */
     //Si aucun rapport optimal n'est trouvé, le rapport courant est retourné
     int boucleMeilleurConso(int delta){

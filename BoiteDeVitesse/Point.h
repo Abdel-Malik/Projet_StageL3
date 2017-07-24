@@ -9,40 +9,36 @@
 class Point{
 
     //-**attributs**-//
-    double vitesse;
-    double chargeMoteur;
-    double csq;
+    double x;
+    double y;
+    double z;
 
     //-**Méthodes**-//
     public:
+
     /*Constructeurs*/
     Point(){
-        vitesse = 0;
-        chargeMoteur = 0;
-        csq = 0;
+        x = 0;
+        y = 0;
+        z = 0;
     };
-    Point(double v, double chM, double val){
-        vitesse = v;
-        chargeMoteur = chM;
-        csq = val;
+    Point(double X, double Y, double Z){
+        x = X;
+        x = Y;
+        z = Z;
     };
 
     /*getter*/
     double get1eD(){
-        return vitesse;
+        return x;
     }
     double get2eD(){
-        return chargeMoteur;
+        return y;
     }
     double get3eD(){
-        return csq;
+        return z;
     }
-    /*setter*/
-
 };
-
-
-//signatures autres
 
 #endif
 
