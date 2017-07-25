@@ -130,7 +130,6 @@ class MDV
     }
 
 
-    //Voisin inf' gauche
     void majInter(){
         i.majMDV(moteur.activationRalenti, gear, v_auto,moteur.getVitesse(), moteur.puissanceFournie(pAcc), pAcc, pFrein, getConsommationMoteur(moteur.getVitesse()));
     }

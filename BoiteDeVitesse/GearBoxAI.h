@@ -50,7 +50,7 @@ class GearBoxAI{
         recuperationDonnees();
         if(!marcheArriere){
             rapportCoherent();
-            if((mode == ModeConduite::ECO && chargeMoteur() <= 0.95) || (mode == ModeConduite::PERF && chargeMoteur() < 0.2)){
+            if((mode == ModeConduite::ECO && chargeMoteur() <= 0.9) || (mode == ModeConduite::PERF && chargeMoteur() < 0.2)){
                 optimiserConsommation();
             }else{
                 optimiserPuissance();

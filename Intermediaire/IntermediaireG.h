@@ -188,7 +188,7 @@ class IntermediaireG{
      */
     double getConsommation(double r){
         double y = getCoupleMoteur(r);
-        return coefficientEquation[0]*(pow(r,EXP_MEMBRE1))+coefficientEquation[1]*pow((r+1),EXP_MEMBRE2)+coefficientEquation[2]*pow(r*y,EXP_MEMBRE3)+coefficientEquation[3]*pow(y,EXP_MEMBRE4)+coefficientEquation[4];
+        return calculConsommationSpecifique(r,y);
     };
 
 
@@ -213,6 +213,7 @@ class IntermediaireG{
         freinRoues[i] = chrg;
     };
 
+    //utilisée lors des tests avec le mdv simpliste (à finir par supprimer)
     void majMDV(bool a, int g, double v, double r, double p, double cM, double cF, double conso){
         ralentiMot = a;
         currentGear = g;
@@ -284,6 +285,15 @@ class IntermediaireG{
             x = x*val;
         }
         return res;
+    }
+
+    /** \brief Implémentation de la formule du calcul de la consommation spécifique
+     * \param[in] rotation le régime moteur 'en tr/min'
+     * \param[in] couple le couple fourni par la moteur 'en N.m'
+     * \return La valeur de la consommation spécifique
+     */
+    double calculConsommationSpecifique(double rotation, double couple){
+        return coefficientEquation[0]*(pow(rotation,EXP_MEMBRE1))+coefficientEquation[1]*pow((rotation+1),EXP_MEMBRE2)+coefficientEquation[2]*pow(rotation*couple,EXP_MEMBRE3)+coefficientEquation[3]*pow(couple,EXP_MEMBRE4)+coefficientEquation[4];
     }
 };
 #endif
