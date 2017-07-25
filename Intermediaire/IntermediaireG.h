@@ -11,6 +11,7 @@
 #include <iostream>
 #include <vector>
 #include <string.h>
+#include <stdio.h>
 #include <math.h>
 
 #include "../BoiteDeVitesse/E_ModeConduite.h"
@@ -18,36 +19,38 @@
 class IntermediaireG{
 
     //--**attributs**--//
-
     //Constantes_véhicule
     public:
-    static constexpr double M_PI = 3.1415926;
-    static const int GEAR_MIN = 0;
-    static const int GEAR_MAX = 6;
-    static const int ALPHA = 1.2;
 
-    static constexpr double VITESSE_MIN = 0;
-    static constexpr double VITESSE_MAX = 123.26;
-    static constexpr double PUISSANCE_MIN = 0;
-    static constexpr double PUISSANCE_MAX = 266;
-    static constexpr double COUPLE_MIN = 0;
-    static constexpr double COUPLE_MAX = 1700;
-    static constexpr double RPM_MIN = 800;
-    static constexpr double RPM_MAX = 2500;
-    static constexpr double CHARGE_MIN = 0;
-    static constexpr double CHARGE_MAX = 1;
     double coeffCouple[4] = {0.0000002,-0.0015774,2.8671445,191.44755};
     double coeffConso[3] = {0.0000304,-0.0812751,243.36373};
-    double coefficientEquation[5] = {0.000000002351,10422.766,-0.0000069,-0.0094361,207.25751};
-    double rapportTransmission[7] = {4.24,3.36,1.91,1.42,1,0.72,0.62}; // gear : R - 1 - 2 - 3 - 4 - 5 - 6
+    double coefficientEquation[5] = {0.0003697,9852.1396,-0.0000597,-0.9573306,221.96138};
+    static constexpr double MATH_PI = 3.1415926;
+    static constexpr double EXP_MEMBRE1 = 1.5;
+    static constexpr double EXP_MEMBRE2 = -1;
+    static constexpr double EXP_MEMBRE3 = 0.9;
+    static constexpr double EXP_MEMBRE4 = .45;
 
-    //Données Véhicule
+    static constexpr double CHARGE_MIN = 0;
+    static constexpr double CHARGE_MAX = 1;
+
     private:
-    enum ModeConduite mode;
-    bool ralentiMot;
+
+    //Données de l'instance du véhicule
+    int gearMin;
+    int gearMax;
+    double vitesseMin;
+    double vitesseMax;
+    double regimeMin;
+    double regimeMax;
+    double consommationRalenti;
+
+    enum ModeConduite mode = ModeConduite::ECO;
+    bool ralentiMot = true;
     int currentGear;
     int nbRoues;
     std::vector<double> rayonRoues;
+    std::vector<double> rapportTransmission; //gear : R - 1 - 2 ...
 
     //Interaction Véhicule
     double vitesseVehicule;
@@ -63,19 +66,28 @@ class IntermediaireG{
 
     public:
     //Constructeur
-    IntermediaireG(int nbRoues, double rayonRoue){
-        mode = ModeConduite::ECO;
-        ralentiMot = false;
-        nbRoues = nbRoues;
-        for(int i = 0; i < nbRoues ; i++){
-            rayonRoues.push_back(rayonRoue);
-            vitesseRoues.push_back(0);
-            freinRoues.push_back(0);
-        }
+    IntermediaireG(){
+        recuperationsCaracteristiquesVehicule();
     };
 
-    /*-----getter-----*/
+    //*!-----getter-----*!*//
+
     //données véhicule
+
+    int getGearMax(){
+        return gearMax;
+    }
+
+    int getGearMin(){
+        return gearMin;
+    }
+
+    double getRegimeMax(){
+        return regimeMax;
+    }
+    double getRegimeMin(){
+        return regimeMin;
+    }
     /** \brief Retourner si le moteur est au ralenti
      * \return Un boolean (true) si le moteur est au ralenti, (false) sinon.
      */
@@ -159,7 +171,7 @@ class IntermediaireG{
      * \return La puissance moteur 'en kW'
      */
     double getPuissanceMoteur(double r){
-         return ((M_PI/30)*r*getCoupleMoteur(r))/1000;
+         return ((MATH_PI/30)*r*getCoupleMoteur(r))/1000;
     };
 
     /** \brief calcul le couple théorique du moteur en fonction du régime
@@ -176,18 +188,9 @@ class IntermediaireG{
      */
     double getConsommation(double r){
         double y = getCoupleMoteur(r);
-        return coefficientEquation[0]*(r*r*r)+coefficientEquation[1]*(1/(r+1))+coefficientEquation[2]*r*y+coefficientEquation[3]*y+coefficientEquation[4];
+        return coefficientEquation[0]*(pow(r,EXP_MEMBRE1))+coefficientEquation[1]*pow((r+1),EXP_MEMBRE2)+coefficientEquation[2]*pow(r*y,EXP_MEMBRE3)+coefficientEquation[3]*pow(y,EXP_MEMBRE4)+coefficientEquation[4];
     };
 
-    /*wait
-    */
-    double consoAvecCoeff(double r){
-        double y = getPuissanceMoteur(r);
-        double yTh = y/chargeMoteur;
-        double conso = coefficientEquation[0]*(r*r)+coefficientEquation[1]*y+coefficientEquation[2];
-        double consoTh = coefficientEquation[0]*(r*r)+coefficientEquation[1]*yTh+coefficientEquation[2];
-        return ((conso)*(1+ALPHA*(1-((coeffCouple[0]*r*r+coeffCouple[1]*r+coeffCouple[2])/consoTh))));
-    };
 
     /** \brief Retourne une valeur de l'appuie sur la pédale d'accélération
      * \return Une valeur dans l'intervalle [0 ; 1]
@@ -223,6 +226,50 @@ class IntermediaireG{
 
     private:
 
+    /** \brief !TODO!
+    * utiliser ces méthodes pour récupérer toutes les informations utilisés par les autres classes
+    */
+    void recuperationsCaracteristiquesVehicule(){
+        recuperationsInformationsRoues();
+        recuperationsInformationsMoteur();
+        recuperationsInformationsBoiteDeVitesse();
+        recuperationsInformationsVehicule();
+    }
+
+    void recuperationsInformationsRoues(){
+        nbRoues = 4;
+        double rayonRoue = .4719; //rayon de la roue (en mètre)
+        for(int i = 0; i < nbRoues ; i++){
+            rayonRoues.push_back(rayonRoue);
+            vitesseRoues.push_back(0);
+            freinRoues.push_back(0);
+        }
+    }
+    void recuperationsInformationsMoteur(){
+        vitesseMin = 0;
+        vitesseMax = 123.26;
+        regimeMin = 800;
+        regimeMax = 2500;
+        consommationRalenti = 3.48;
+    }
+    void recuperationsInformationsBoiteDeVitesse(){
+        gearMin = 0;
+        gearMax = 6;
+        double ratioT[] = {4.24,3.36,1.91,1.42,1,0.72,0.62};
+        for(int i = 0; i < gearMax ; i++){
+            rapportTransmission.push_back(ratioT[i]);
+        }
+    }
+    void recuperationsInformationsVehicule(){
+        mode = ModeConduite::ECO;
+        ralentiMot = true;
+        currentGear = 1;
+        vitesseVehicule = 0;
+        rotationMoteur = 0;
+        puissanceMoteur = 0;
+        consommation = 0;
+    }
+
      /** \brief Automatisation du calcul d'un polynôme (une variable) quelque soit le nombre du coefficients
      * Le polynôme est représenté par un tableau de coefficients du degré n au degré 0.
      * \param[in] val La variable pour laquelle on calcul la valeur du polynôme
@@ -237,9 +284,6 @@ class IntermediaireG{
             x = x*val;
         }
         return res;
-    }
-    double n(double x, double maxi){
-        return x/maxi;
     }
 };
 #endif

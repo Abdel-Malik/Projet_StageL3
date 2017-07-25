@@ -3,7 +3,6 @@
 
 #include "Engine.h"
 #include "../Intermediaire/IntermediaireG.h"
-#include "../BoiteDeVitesse/GrilleInterpolation.h"
 class MDV
 {
     //temp
@@ -15,7 +14,7 @@ class MDV
     double MASSE_VOLUMIQUE_AIR = 1.22; //kg/m^3
 
     //IntermediaireG
-    IntermediaireG i = IntermediaireG(6,0.4719);
+    IntermediaireG i = IntermediaireG();
 
     //transmission
     double RATIO_T_PONT = 5.82;
@@ -41,7 +40,7 @@ class MDV
 
     //vehicule
     double v_auto = 15; // m/s
-    int gear = 1;
+    int gear = 2;
     bool pointMort = true;
 
     public:
@@ -55,7 +54,7 @@ class MDV
             v_auto = 0;
             moteur.demarrerMoteur(WheelToRpm(v_auto));
             pFrein = 0;
-            pAcc = 1;
+            pAcc = .81;
             majInter();
         }
 

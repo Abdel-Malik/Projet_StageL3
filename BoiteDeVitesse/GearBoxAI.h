@@ -15,10 +15,16 @@
 #include "Point.h"
 #include "../Intermediaire/IntermediaireG.h" //<>
 
+/**\class GearBoxAI
+*Cette classe modélise le fonctionnement d'une boîte de vitesse automatisée
+*/
 class GearBoxAI{
 
     //--**attributs**--//
     enum ModeConduite mode;
+
+    /**\brief contient le rapport (vitesse_moteur / vitesse_roue) des différentes vitesses
+    */
     std::vector<double> demultiplication;
     IntermediaireG* informations; // <>
     double rotation_moteur, rotationT, puissance, consommation;
@@ -37,12 +43,12 @@ class GearBoxAI{
     /*Méthodes publiques*/
 
     /** \brief Fonction global réalisant l'appel de sous-fonctions
-    * le but final est d'obtenir la meilleur vitesse en fonction du mode effectif
+    * le but final est d'obtenir la meilleure vitesse en fonction du mode effectif
     * Cas spécial : Si la marche arrière est enclenchée, aucun test n'est effectué
     */
     int optimiserRapport(){
         recuperationDonnees();
-        if(!marcheArriere){}
+        if(!marcheArriere){
             rapportCoherent();
             if((mode == ModeConduite::ECO && chargeMoteur() <= 0.95) || (mode == ModeConduite::PERF && chargeMoteur() < 0.2)){
                 optimiserConsommation();
@@ -65,40 +71,8 @@ class GearBoxAI{
     * l'élément [0] correspond au rapport de la marche arrière
     */
     void recuperationDesRapportsDeTransmissions(){
-        for(int i = 0 ; i <=(informations->GEAR_MAX-informations->GEAR_MIN); i++) //<>
+        for(int i = 0 ; i <=(informations->getGearMax()-informations->getGearMin()); i++) //<>
             demultiplication.push_back(informations->getRapportBoiteDeVitesse(i));
-    }
-
-    /** \brief Vérifie que la vitesse engagée entraine une rotation moteur dans la plage de rotation dans laquelle il est foncitonnel.
-    * Si la rotation moteur devient trop faible/importante un changement de vitesse sera opéré avant tout autre test.
-    */
-    void rapportCoherent(){
-        double gearT = gear;
-        while(nouvelleRotationMoteur(gearT) > informations->RPM_MAX && gearT < 6) // <>
-            gearT++;
-        while(nouvelleRotationMoteur(gearT) < informations->RPM_MIN && gearT > 1) // <>
-            gearT--;
-        gear = gearT;
-    }
-    double rotationMoteurCourante(){
-        return informations->getRotationMoteur();
-    }
-    double puissanceCourante(){
-        return informations->getPuissanceMoteur();
-    }
-    double consommationCourante(){
-        return informations->getConsommation();
-    }
-
-    double puissanceTheorique(){
-        return informations->getPuissanceMoteur(rotationT);
-    }
-    double consommationTheorique(){
-        return informations->getConsommation(rotationT);
-    }
-
-    double chargeMoteur(){
-        return informations->getChargeMoteur();
     }
 
     /** \brief Récupérer les données du véhicule prmettant le bon fonctionnement de cette classe
@@ -113,8 +87,19 @@ class GearBoxAI{
         rotation_moteur = rotationMoteurCourante();
         puissance = puissanceCourante();
         consommation = consommationCourante();
-    };
+    }
 
+    /** \brief Vérifie que la vitesse engagée entraine une rotation moteur dans la plage de rotation dans laquelle il est fonctionnel.
+    * Si la rotation moteur devient trop faible/importante un changement de vitesse sera opéré avant tout autre test.
+    */
+    void rapportCoherent(){
+        double gearT = gear;
+        while(nouvelleRotationMoteur(gearT) > informations->getRegimeMax() && gearT < 6) // <>
+            gearT++;
+        while(nouvelleRotationMoteur(gearT) < informations->getRegimeMin() && gearT > 1) // <>
+            gearT--;
+        gear = gearT;
+    }
 
     /** \brief Modifier le rapport de vitesse courant du véhicule
      * \param[in] ng Le rapport de vitesse à appliquer
@@ -132,7 +117,7 @@ class GearBoxAI{
         if(ng == gear)
             ng = boucleMeilleurPuissance(1);
         changeGear(ng);
-    };
+    }
 
 
     /** \brief trouver le rapport optimisant la consommation du véhicule
@@ -144,7 +129,7 @@ class GearBoxAI{
         if(ng == gear)
             ng = boucleMeilleurConso(1);
         changeGear(ng);
-    };
+    }
 
 
     /** \brief Retourner le rapport optimal
@@ -157,7 +142,7 @@ class GearBoxAI{
         int gearT = gear+delta;
         int ng = gear;
         rotationT = nouvelleRotationMoteur(gearT);
-        while(gearT > informations->GEAR_MIN && gearT <= informations->GEAR_MAX && (rotationT >= informations->RPM_MIN && rotationT <= informations->RPM_MAX)){ //<>
+        while(gearT > informations->getGearMin() && gearT <= informations->getGearMax() && (rotationT >= informations->getRegimeMin() && rotationT <= informations->getRegimeMax())){ //<>
             pCalculee = puissanceTheorique();
             std::cout << "pour g = "<<gearT<<" => "<<rotationT<<" pC = "<<pCalculee<<" | " << "cur'G "<<gear<<" => "<<rotation_moteur<<" p = " << puissance << std::endl;
             if(puissance < 0.99*pCalculee){
@@ -168,7 +153,7 @@ class GearBoxAI{
             rotationT = nouvelleRotationMoteur(gearT);
         }
         return ng;
-    };
+    }
 
 
     /** \brief Retourner le rapport optimal
@@ -181,7 +166,7 @@ class GearBoxAI{
         int gearT = gear+delta;
         int ng = gear;
         rotationT = nouvelleRotationMoteur(gearT);
-        while(gearT > informations->GEAR_MIN && gearT <= informations->GEAR_MAX && (rotationT >= informations->RPM_MIN && rotationT <= informations->RPM_MAX)){ // <>
+        while(gearT > informations->getGearMin() && gearT <= informations->getGearMax() && (rotationT >= informations->getRegimeMin() && rotationT <= informations->getRegimeMax())){ // <>
             consoCalculee = consommationTheorique();
             std::cout << "pour g = "<<gearT<<" => "<<rotationT<<" cC = "<<consoCalculee<<" | " << "cur'G "<<gear<<" => "<<rotation_moteur<<" conso = " << consommation << std::endl;
             if(consommation > (1.01*consoCalculee)){ //101% afin de laisser une zone dans laquelle il n'y a pas de changement (pour eviter le cas de changement répétitif dû à deux valeurs identiques)
@@ -192,10 +177,32 @@ class GearBoxAI{
             rotationT = nouvelleRotationMoteur(gearT);
         }
         return ng;
-    };
+    }
 
     double nouvelleRotationMoteur(int gear){
         return (demultiplication[gear]/demultiplication[this->gear])*rotation_moteur;
+    }
+
+    /* Fonction lié à l'utilisation d'une classe intermediaire */
+
+    double rotationMoteurCourante(){
+        return informations->getRotationMoteur();
+    }
+    double puissanceCourante(){
+        return informations->getPuissanceMoteur();
+    }
+    double consommationCourante(){
+        return informations->getConsommation();
+    }
+
+    double puissanceTheorique(){
+        return informations->getPuissanceMoteur(rotationT);
+    }
+    double consommationTheorique(){
+        return informations->getConsommation(rotationT);
+    }
+    double chargeMoteur(){
+        return informations->getChargeMoteur();
     }
 };
 

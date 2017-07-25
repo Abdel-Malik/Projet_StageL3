@@ -20,13 +20,20 @@
 using namespace std;
 
 //--**Classe 1 SCI**--//
+/**\class StockageConsommationInstantanee
+*(SCI) sert à stocker les variables liées à la consommation d'un instant donnée
+*/
 class StockageConsommationInstantanee{
 
     //--**Attributs**--//
     /** \brief Q est un 'double' contenant la consommation 'en litre par heure'
     */
 	double Q;
+	/** \brief speed est un 'double' contenant la vitesse du véhicule 'en kilomètre par heure'
+    */
 	double speed;
+	/** \brief ralenti est un 'booléen' à true si le moteur est au ralenti, false sinon
+    */
     bool ralenti;
 
     //-**Méthodes**-//
@@ -46,14 +53,14 @@ class StockageConsommationInstantanee{
     void affichageConsommationInstantanee(){
         string res;
         double c = Q;
-        if(isRalenti()||getSpeed()<1)//juste a.isRalenti()
+        if(isRalenti()||getSpeed()<1)
             res = " L/h";
         else{
                 //conversion
             c = c*(100/getSpeed());
             res = " L/100km";
         }
-        cout << c << res << endl;
+        cout << "\n" << c << res << endl;
     }
 
     /*Getter*/
@@ -63,9 +70,15 @@ class StockageConsommationInstantanee{
     double getQ(){
         return Q;
     }
+    /** \brief Retourne la vitesse du véhicule.
+     * \return Un 'double' 'en km/h'
+    */
     double getSpeed(){
         return speed;
     }
+    /** \brief Retourne l'état du moteur
+     * \return Un 'booléen' à true si le moteur est au ralenti, false sinon
+    */
     bool isRalenti(){
         return ralenti;
     }
@@ -83,6 +96,11 @@ class StockageConsommationInstantanee{
 };
 
 //--*Classe 2 -Principale- SCG*--//
+/**\class StockageConsommationGeneral
+*(SCG) sert à stocker les informations liées à la consommation du véhicule
+* Contient un tableau (historique) de consommations instantanées
+* ainsi que les données moyennes
+*/
 class StockageConsommationGeneral{
 
     //-**Attributs**-//
@@ -122,8 +140,8 @@ class StockageConsommationGeneral{
         moyenne = moyenne/(nonLu+index);
         v = v/(nonLu+index);
         StockLu(nonLu);
-        setConsMoyenne(moyenne);
-        setVitesseMoyenne(v);
+        consMoyenne = moyenne;
+        vitesse = v;
     }
 
 
@@ -140,43 +158,75 @@ class StockageConsommationGeneral{
             sci[sci.size()-1].setQ(consoRalenti);
         else
             sci[sci.size()-1].setQ((puissanceMoteur()*consommation())/(1000*rhoDiesel));
-        sci[sci.size()-1].affichageConsommationInstantanee();
     }
 
     /** \brief affichage de la consommation du véhicule
-     */
-    //Dans un premier temps l'affichage ce fait en texte sur la sortie standard.
+    * l'affichage envoie une chaîne sur la sortie standard
+    * si la vitesse moyenne est très faible, le résultat est retourné en 'L/h'
+    * sinon la valeur est retournée en 'L/100km'
+    */
     void affichageConsommationMoyenne(){
-        cout << "consommation moyenne :" << endl;
+        string str = "consommation moyenne : ";
         if(vitesse < 2)
-            cout << consMoyenne << " L/h" << endl;
+            cout << str << consMoyenne << " L/h" << endl;
         else
-            cout << consMoyenne*(100/vitesse) << " L/100km" << endl;
+            cout << str << consMoyenne*(100/vitesse) << " L/100km" << endl;
+    }
+
+    /** \brief affichage de la consommation intantannée du véhicule
+    * l'affichage envoie une chaîne sur la sortie standard
+    */
+    void affichageConsommationInstantanee(){
+        sci[sci.size()-1].affichageConsommationInstantanee();
     }
 
     /** \brief Réaliser un calcul du rejet moyen de CO2
-     */
+    * si la vitesse moyenne est très faible, le résultat est retourné en 'kg/h'
+    * sinon la valeur est retournée en 'kg/100km'
+    */
     void calculRejetCO2(){
         double vMoy = vitesse;
         if(vMoy < 2)
-            setRejetCO2(consMoyenne*CONST_RAPPORT_DIESEL_CO2);
+            rejetCO2 = consMoyenne*CONST_RAPPORT_DIESEL_CO2;
         else
-            setRejetCO2(consMoyenne*(100/vMoy)*CONST_RAPPORT_DIESEL_CO2);
+            rejetCO2 = consMoyenne*(100/vMoy)*CONST_RAPPORT_DIESEL_CO2;
     }
 
     /*getter*/
+    /** \brief Retourne un vector<StockageConsommationInstantanee>.
+    * \return Un 'vector<SCI>' contenant les consommations instantanées déjà relevés
+    */
     vector<StockageConsommationInstantanee> getTabStockage(){
         return sci;
     }
+
+    /** \brief Retourne un élément de l'attribut vector<StockageConsommationInstantanee>.
+    * \return Un 'SCI'
+    */
     StockageConsommationInstantanee getSCI(int index){
         return sci[index];
     }
+
+    /** \brief Retourne la consommation moyenne actuelle
+    * \return Un 'double', la consommation moyenne calculé
+    * ou (0) si aucune consommation moyenne n'a été calculée
+    */
     double getConsMoyenne(){
         return consMoyenne;
     }
+
+    /** \brief Retourne la vitesse moyenne du véhicule
+    * \return Un 'double', la vitesse moyenne calculé du véhicule
+    * ou (0) si aucune vitesse moyenne n'a été calculée
+    */
     double getVitesseMoyenne(){
         return vitesse;
     }
+
+    /** \brief Retourne le rojet de OC2 moyen du véhicule
+    * \return Un 'double', le rejet moyen de CO2 calculé
+    * ou (0) si aucun rejet moyen n'a été calculée
+    */
     double getRejetCO2(){
         return rejetCO2;
     }
@@ -185,17 +235,6 @@ class StockageConsommationGeneral{
     }
     int getIndex(){
         return indexDebut;
-    }
-
-    /*setter*/
-    void setConsMoyenne(double m){
-        this->consMoyenne = m;
-    }
-    void setVitesseMoyenne(double v){
-        this->vitesse = v;
-    }
-    void setRejetCO2(double r){
-        this->rejetCO2 = r;
     }
 
     void ajoutStockage(){   //ajout à faire ici à la fin
@@ -209,6 +248,7 @@ class StockageConsommationGeneral{
     private:
 
     /* Fonction lié à l'utilisation d'une classe intermediaire */
+
     double puissanceMoteur(){
         return intermediaire->getPuissanceMoteur();
     }

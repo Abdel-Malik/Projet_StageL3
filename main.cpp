@@ -12,7 +12,7 @@ int main()
     GearBoxAI gb = GearBoxAI(i);
     StockageConsommationGeneral scg = StockageConsommationGeneral(i);
     bool b = false;
-    for(int i =0; i <1010; i++){
+    for(int i =0; i <100; i++){
         vehicule.avancer(i);
         vehicule.setGear(gb.optimiserRapport());
         if(vehicule.getVitesseKMh() > 51){
@@ -20,9 +20,10 @@ int main()
             b = true;
         }
         if(vehicule.getVitesseKMh() < 49&&b){
-            vehicule.setpAcc(1);
+            vehicule.setpAcc(0.4);
         }
         scg.calculConsommationInstantanee();
+        scg.affichageConsommationInstantanee();
     }
     scg.calculConsommationMoyenne();
     scg.affichageConsommationMoyenne();
