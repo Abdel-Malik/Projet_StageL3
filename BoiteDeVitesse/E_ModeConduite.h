@@ -6,6 +6,9 @@
 #ifndef _E_ModeConduite_h_
 #define _E_ModeConduite_h_
 
+/** \enum ModeConduite
+* \brief Référence les modes de fonctionnement de la boîte de vitesse
+*/
 enum ModeConduite{
     ECO,
     PERF

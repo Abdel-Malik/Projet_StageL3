@@ -1,7 +1,7 @@
 ﻿/**------------------------------
  * \Author Abdel-Malik Bouhassoun
  * \date 29 Mai 2017
- * Ce header contient une modélisation du fonctionnement d'un système d'antiblocage de roues
+ * \file Ce header contient une modélisation du fonctionnement d'un système d'antiblocage de roues
  */
 
 #ifndef _ABS_h_
@@ -21,7 +21,8 @@
 //--*****   definition Classe    *****--/
 //--**********************************--/
 
-/** \class La classe ABS est la classe modélisant le fonctionnement d'un ABS
+/** \class ABS
+ * \brief La classe ABS est la classe modélisant le fonctionnement d'un ABS
  * agissant sur chaque roue du véhicule sur lequel il est employé.
  */
 class ABS{
@@ -94,7 +95,7 @@ class ABS{
         relacherRoues();
     };
 
-    /** \brief Réaliser une dichotomie sur les roues ayant un glissement non optimal
+    /** \brief Réalise une dichotomie sur les roues ayant un glissement non optimal
     * Après 3 boucles conservant un glissment optimal, cette phase s'arrête
     * Si la pédale est relaché, la phase s'arrête
     * \return (true) si la pédale a été relaché (false) sinon
@@ -122,7 +123,7 @@ class ABS{
         return pedale;
     };
 
-    /** \brief Vérifier la conservation du glissement optimal ainsi que le besoin de freiner
+    /** \brief Vérifie la conservation du glissement optimal ainsi que le besoin de freiner
     * Si le conducteur lâche suffisamment la pédale, retourne (false).
     * Si le véhicule perd/gagne de l'adhérence les bornes sont réajustées, retourne (true)
     * \return booléen définissant si l'ABS est toujours actif. si (true) alors il y a eu une modification significative des valeurs de glissement des roues.
@@ -156,7 +157,7 @@ class ABS{
             rouesVehicule.push_back(Roue(this->i.getRayonRoues(i),&(this->i),i));
     };
 
-    /** \brief calculer le glissement de chaque roue au moment de l'appel.
+    /** \brief calcule le glissement de chaque roue au moment de l'appel.
      */
     //Met à jour la vitesse angulaire des roues, appel d'une methode[classe Roue] calculant le glissement pour une vitesse donnée en paramêtre
     void calculGlissement(){
@@ -200,7 +201,7 @@ class ABS{
         }
     };
 
-    /** \brief détecter un blocage des roues
+    /** \brief détecte un blocage des roues
     * si le glissement d'une roue s'approche grandement de 1, alors elle est considérée bloquée.
     * \return (true) si au moins une roue est bloquée
     */

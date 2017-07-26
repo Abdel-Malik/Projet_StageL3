@@ -1,7 +1,7 @@
 ﻿/**------------------------------
  * \Author Abdel-Malik Bouhassoun
  * \date 29 Mai 2017
- * Ce header contient une énumération et une classe permettant de réaliser une méthode de dichotomie
+ * \file Ce header contient une énumération et une classe permettant de réaliser une méthode de dichotomie
  */
 
 #ifndef _outilDichotomie_h_
@@ -10,7 +10,8 @@
 //--************************************--//
 //--****** definition énumération ******--//
 //--************************************--//
-/** \enum Référence les évolutions de pression possible
+/** \enum ChangementPression
+* \brief Référence les évolutions de pression possible
 */
 enum ChangementPression{
     SERRER,
@@ -21,7 +22,8 @@ enum ChangementPression{
 //--******   definition Classe    ******--//
 //--************************************--//
 
-/** \class permet de réaliser une dichotomie dans un intervalle normalisé ([0;1])
+/** \class BornesDichotomie
+* \brief permet de réaliser une dichotomie dans un intervalle normalisé ([0;1])
 */
 class BornesDichotomie{
 
@@ -39,7 +41,7 @@ class BornesDichotomie{
 
     /*méthodes*/
 
-    /** \brief  modifier la valeur de freinage par dichotomie
+    /** \brief  modifie la valeur de freinage par dichotomie
      * \param[in] choix l'évolution souhaité d'une étape de dichotomie (Serrer / Relacher)
      */
     void dichotomie(ChangementPression choix){

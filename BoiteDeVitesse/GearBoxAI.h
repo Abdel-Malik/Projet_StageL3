@@ -16,7 +16,7 @@
 #include "../Intermediaire/IntermediaireG.h" //<>
 
 /**\class GearBoxAI
-*Cette classe modélise le fonctionnement d'une boîte de vitesses automatisée
+* \brief Cette classe modélise le fonctionnement d'une boîte de vitesses automatisée
 */
 class GearBoxAI{
 
@@ -75,7 +75,7 @@ class GearBoxAI{
             demultiplication.push_back(informations->getRapportBoiteDeVitesse(i));
     }
 
-    /** \brief Récupérer les données du véhicule prmettant le bon fonctionnement de cette classe
+    /** \brief Récupère les données du véhicule prmettant le bon fonctionnement de cette classe
      */
     void recuperationDonnees(){
         gear = informations->getGear();
@@ -101,14 +101,14 @@ class GearBoxAI{
         gear = gearT;
     }
 
-    /** \brief Modifier le rapport de vitesse courant du véhicule
+    /** \brief Modifie le rapport de vitesse courant du véhicule
      * \param[in] ng Le rapport de vitesse à appliquer
      */
     void changeGear(int ng){
         gear = ng;
     }
 
-    /** \brief trouver le rapport optimisant l'accéleration du véhicule
+    /** \brief trouve le rapport optimisant l'accéleration du véhicule
      */
     //Appel à une boucle externe
     void optimiserPuissance(){
@@ -120,7 +120,7 @@ class GearBoxAI{
     }
 
 
-    /** \brief trouver le rapport optimisant la consommation du véhicule
+    /** \brief trouve le rapport optimisant la consommation du véhicule
      */
     //Appel à une boucle externe
     void optimiserConsommation(){
@@ -132,7 +132,7 @@ class GearBoxAI{
     }
 
 
-    /** \brief Retourner le rapport optimal maximisant la puissance fournie par le moteur
+    /** \brief Retourne le rapport optimal maximisant la puissance fournie par le moteur
      * \param [in] delta incrémente/décrémente le rapport de vitesse testé
      * \return Le rapport[supérieur/inférieur] optimal
      */
@@ -156,7 +156,7 @@ class GearBoxAI{
     }
 
 
-    /** \brief Retourner le rapport optimal minimisant la consommation du moteur
+    /** \brief Retourne le rapport optimal minimisant la consommation du moteur
      * \param[in] delta incrémente/décrémente le rapport de vitesse testé
      * \return Le rapport[supérieur/inférieur] optimal
      */

@@ -1,7 +1,7 @@
 ﻿/**------------------------------
  * \Author Abdel-Malik Bouhassoun
  * \date 29 Mai 2017
- * Ce header contient une classe roue ayant pour but d'être manipulée par l'ABS
+ * \file Ce header contient une classe roue ayant pour but d'être manipulée par l'ABS
  */
 
 #ifndef _Roue_h_
@@ -14,8 +14,9 @@
 //--******   definition Classe    ******--//
 //--************************************--//
 
-/** \class La classe Roue est la classe se raportant à une roue du véhicule simulé,
-*cette roue contient les informations utiles pour une manipulation par l'ABS.
+/** \class Roue
+* \brief La classe Roue est la classe se raportant à une roue du véhicule simulé,
+* cette roue contient les informations utiles pour une manipulation par l'ABS.
 */
 class Roue{
 
@@ -41,14 +42,14 @@ class Roue{
     /*méthodes*/
 
 
-    /** \brief calculer le glissement de la roue en fonction de la vitesse du véhicule.
+    /** \brief calcule le glissement de la roue en fonction de la vitesse du véhicule.
      * \param[in] v_auto la vitesse du véhicule 'en m/s'
      */
     void glissementRoue(double v_auto){
         glissement = (v_auto-(2*inter->MATH_PI*vitesseAngulaire*rayon))/v_auto; //2PI*rayon*vitesseAngulaire en (tr/s) => vitesse (m/s)
     };
 
-    /** \brief modifier la valeur de freinage par dichotomie
+    /** \brief modifie la valeur de freinage par dichotomie
      * \param[in] choix l'évolution souhaité d'une étape de dichotomie (Serrer / Relacher)
      */
     void dichotomie(ChangementPression choix){

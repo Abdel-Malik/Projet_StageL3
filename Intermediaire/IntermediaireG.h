@@ -16,6 +16,10 @@
 
 #include "../BoiteDeVitesse/E_ModeConduite.h"
 
+/**\class IntermediaireG
+* Cette classe permet de faire la liaison entre le simulateur et différentes briques logicielles réalisées. [consommation/Boite de vitesse/ABS]
+* \brief Regroupe les informations utilisés par différents briques logicielles.
+*/
 class IntermediaireG{
 
     //--**attributs**--//
@@ -88,32 +92,32 @@ class IntermediaireG{
     double getRegimeMin(){
         return regimeMin;
     }
-    /** \brief Retourner si le moteur est au ralenti
+    /** \brief Retourne si le moteur est au ralenti
      * \return Un boolean (true) si le moteur est au ralenti, (false) sinon.
      */
     bool ralentiMoteur(){
         return ralentiMot;
     };
-    /** \brief Retourner le rapport courant
+    /** \brief Retourne le rapport courant
      * \return Le rapport actuellement utilisé
      */
     int getGear(){
         return currentGear;
     };
-    /** \brief Retourner le mode d'utilisation de la boîte de vitesse
+    /** \brief Retourne le mode d'utilisation de la boîte de vitesse
      * \return L'élément "ModeConduite" utilisé.
      */
     ModeConduite getMode(){
         return mode;
     };
-    /** \brief Retourner le nombre de roue du véhicule
+    /** \brief Retourne le nombre de roue du véhicule
      * \return le nombre de roues
      */
     int getNbRoues(){
         return nbRoues;
     };
 
-    /** \brief Retourner le rayon de la roue (i) du véhicule
+    /** \brief Retourne le rayon de la roue (i) du véhicule
      * \return Le rayon de la roue 'en mètre'
      */
     double getRayonRoues(int i){
@@ -121,7 +125,7 @@ class IntermediaireG{
     };
 
     //interaction véhicule
-    /** \brief Retourner le rapport de conversion de la vitesse de rotation (avant-après) la boîte de vitesse
+    /** \brief Retourne le rapport de conversion de la vitesse de rotation (avant-après) la boîte de vitesse
      * \param[in] le rapport de vitesse dont l'on veut connaître le ratio.
      * \return Le coefficient du rapport (vitesse_moteur / vitesse_roue)
      */
@@ -129,7 +133,7 @@ class IntermediaireG{
         return rapportTransmission[rapport];
     }
 
-    /** \brief Retourner la vitesse du véhicule
+    /** \brief Retourne la vitesse du véhicule
      * \return La vitesse du véhicule 'en mètre/seconde'
      */
     double getVitesse(){
@@ -143,14 +147,14 @@ class IntermediaireG{
         return vitesseRoues[i];
     };
 
-    /** \brief Retourner la vitesse de rotation du moteur
+    /** \brief Retourne la vitesse de rotation du moteur
      * \Return La vitesse du moteur 'en tour/minute'
      */
     double getRotationMoteur(){
         return rotationMoteur;
     };
 
-    /** \brief Retourner la puissance fourni parle moteur
+    /** \brief Retourne la puissance fourni parle moteur
      * \return La puissance moteur 'en kW'
      */
     double getPuissanceMoteur(){

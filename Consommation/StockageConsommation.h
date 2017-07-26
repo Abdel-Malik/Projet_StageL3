@@ -21,7 +21,7 @@ using namespace std;
 
 //--**Classe 1 SCI**--//
 /**\class StockageConsommationInstantanee
-*(SCI) sert à stocker les variables liées à la consommation d'un instant donnée
+*\brief (SCI) sert à stocker les variables liées à la consommation d'un instant donnée
 */
 class StockageConsommationInstantanee{
 
@@ -97,7 +97,7 @@ class StockageConsommationInstantanee{
 
 //--*Classe 2 -Principale- SCG*--//
 /**\class StockageConsommationGeneral
-*(SCG) sert à stocker les informations liées à la consommation du véhicule
+*\brief (SCG) sert à stocker les informations liées à la consommation du véhicule
 * Contient un tableau (historique) de consommations instantanées
 * ainsi que les données moyennes
 */
@@ -124,7 +124,7 @@ class StockageConsommationGeneral{
 
     /*Méthodes*/
 
-    /** \brief Réaliser une moyenne de la consommation du véhicule
+    /** \brief Réalise une moyenne de la consommation du véhicule
     * on retransforme les anciennes moyennes en somme de valeurs (de poids 1)
     * on ajoute les nouveaux relevés et on divise de manière à obtenir une nouvelle moyenne
     */
@@ -145,7 +145,7 @@ class StockageConsommationGeneral{
     }
 
 
-    /** \brief Réaliser un calcul de la consommation du véhicule (à un instant t)
+    /** \brief Réalise un calcul de la consommation du véhicule (à un instant t)
      * on récupère les informations nécessaire à la création d'un SCI
      * on modifie les indices de parcours pour la moyenne
      * on calcule et stocke Q : la consommation en (l/h)
