@@ -208,10 +208,16 @@ class IntermediaireG{
 
     /*-----fin_getter-----*/
 
-    /*setter*/
+    //*!-----setter-----*!*//
     void setFreinageRoue(int i, double chrg){
         freinRoues[i] = chrg;
     };
+
+    void setGear(int newGear){
+        currentGear = newGear;
+    };
+    /*-----fin_setter-----*/
+
 
     //utilisée lors des tests avec le mdv simpliste (à finir par supprimer)
     void majMDV(bool a, int g, double v, double r, double p, double cM, double cF, double conso){
@@ -257,7 +263,7 @@ class IntermediaireG{
         gearMin = 0;
         gearMax = 6;
         double ratioT[] = {4.24,3.36,1.91,1.42,1,0.72,0.62};
-        for(int i = 0; i < gearMax ; i++){
+        for(int i = 0; i <= gearMax ; i++){
             rapportTransmission.push_back(ratioT[i]);
         }
     }

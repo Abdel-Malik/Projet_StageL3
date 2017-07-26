@@ -16,7 +16,7 @@
 #include "../Intermediaire/IntermediaireG.h" //<>
 
 /**\class GearBoxAI
-*Cette classe modélise le fonctionnement d'une boîte de vitesse automatisée
+*Cette classe modélise le fonctionnement d'une boîte de vitesses automatisée
 */
 class GearBoxAI{
 
@@ -46,7 +46,7 @@ class GearBoxAI{
     * le but final est d'obtenir la meilleure vitesse en fonction du mode effectif
     * Cas spécial : Si la marche arrière est enclenchée, aucun test n'est effectué
     */
-    int optimiserRapport(){
+    void optimiserRapport(){
         recuperationDonnees();
         if(!marcheArriere){
             rapportCoherent();
@@ -56,7 +56,7 @@ class GearBoxAI{
                 optimiserPuissance();
             }
         }
-        return gear;
+        informations->setGear(gear);
     };
 
     /*getter*/
@@ -71,7 +71,7 @@ class GearBoxAI{
     * l'élément [0] correspond au rapport de la marche arrière
     */
     void recuperationDesRapportsDeTransmissions(){
-        for(int i = 0 ; i <=(informations->getGearMax()-informations->getGearMin()); i++) //<>
+        for(int i = 0 ; i <=informations->getGearMax(); i++) //<>
             demultiplication.push_back(informations->getRapportBoiteDeVitesse(i));
     }
 
@@ -94,9 +94,9 @@ class GearBoxAI{
     */
     void rapportCoherent(){
         double gearT = gear;
-        while(nouvelleRotationMoteur(gearT) > informations->getRegimeMax() && gearT < 6) // <>
+        while(nouvelleRotationMoteur(gearT) > informations->getRegimeMax() && gearT < informations->getGearMax())
             gearT++;
-        while(nouvelleRotationMoteur(gearT) < informations->getRegimeMin() && gearT > 1) // <>
+        while(nouvelleRotationMoteur(gearT) < informations->getRegimeMin() && gearT > 1)
             gearT--;
         gear = gearT;
     }
@@ -132,7 +132,7 @@ class GearBoxAI{
     }
 
 
-    /** \brief Retourner le rapport optimal
+    /** \brief Retourner le rapport optimal maximisant la puissance fournie par le moteur
      * \param [in] delta incrémente/décrémente le rapport de vitesse testé
      * \return Le rapport[supérieur/inférieur] optimal
      */
@@ -142,7 +142,7 @@ class GearBoxAI{
         int gearT = gear+delta;
         int ng = gear;
         rotationT = nouvelleRotationMoteur(gearT);
-        while(gearT > informations->getGearMin() && gearT <= informations->getGearMax() && (rotationT >= informations->getRegimeMin() && rotationT <= informations->getRegimeMax())){ //<>
+        while(gearT > informations->getGearMin() && gearT <= informations->getGearMax() && (rotationT >= informations->getRegimeMin() && rotationT <= informations->getRegimeMax())){
             pCalculee = puissanceTheorique();
             std::cout << "pour g = "<<gearT<<" => "<<rotationT<<" pC = "<<pCalculee<<" | " << "cur'G "<<gear<<" => "<<rotation_moteur<<" p = " << puissance << std::endl;
             if(puissance < 0.99*pCalculee){
@@ -156,7 +156,7 @@ class GearBoxAI{
     }
 
 
-    /** \brief Retourner le rapport optimal
+    /** \brief Retourner le rapport optimal minimisant la consommation du moteur
      * \param[in] delta incrémente/décrémente le rapport de vitesse testé
      * \return Le rapport[supérieur/inférieur] optimal
      */
@@ -166,7 +166,7 @@ class GearBoxAI{
         int gearT = gear+delta;
         int ng = gear;
         rotationT = nouvelleRotationMoteur(gearT);
-        while(gearT > informations->getGearMin() && gearT <= informations->getGearMax() && (rotationT >= informations->getRegimeMin() && rotationT <= informations->getRegimeMax())){ // <>
+        while(gearT > informations->getGearMin() && gearT <= informations->getGearMax() && (rotationT >= informations->getRegimeMin() && rotationT <= informations->getRegimeMax())){
             consoCalculee = consommationTheorique();
             std::cout << "pour g = "<<gearT<<" => "<<rotationT<<" cC = "<<consoCalculee<<" | " << "cur'G "<<gear<<" => "<<rotation_moteur<<" conso = " << consommation << std::endl;
             if(consommation > (1.01*consoCalculee)){ //101% afin de laisser une zone dans laquelle il n'y a pas de changement (pour eviter le cas de changement répétitif dû à deux valeurs identiques)
@@ -179,25 +179,47 @@ class GearBoxAI{
         return ng;
     }
 
+    /** \brief Retourne le régime hypothétique du moteur si le rapport n'était plus la vitesse courante mais celle passé en paramètre
+     * \param[in] gear le nouveau rapport de vitesse utilisé
+     * \return le régime moteur avec le rapport "gear"
+     */
     double nouvelleRotationMoteur(int gear){
         return (demultiplication[gear]/demultiplication[this->gear])*rotation_moteur;
     }
 
     /* Fonction lié à l'utilisation d'une classe intermediaire */
 
+    /** \brief retourne le régime moteur actuel
+     * \return Un 'double', le régime moteur actuel
+     */
     double rotationMoteurCourante(){
         return informations->getRotationMoteur();
     }
+
+    /** \brief retourne la puissance fournie actuel
+     * \return Un 'double', la puissance fournie par le moteur
+     */
     double puissanceCourante(){
         return informations->getPuissanceMoteur();
     }
+
+    /** \brief retourne la consommation actuel
+     * \return Un 'double', la consommation du moteur 'en g/kW.h'
+     */
     double consommationCourante(){
         return informations->getConsommation();
     }
 
+    /** \brief retourne la puissance fournie pour un régime donnée
+     * \return Un 'double', la puissance fournie par le moteur
+     */
     double puissanceTheorique(){
         return informations->getPuissanceMoteur(rotationT);
     }
+
+    /** \brief retourne la consommation du moteur pour un régime donnée
+     * \return Un 'double', la consommation du moteur 'en g/kW.h'
+     */
     double consommationTheorique(){
         return informations->getConsommation(rotationT);
     }

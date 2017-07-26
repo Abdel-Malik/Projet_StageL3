@@ -54,7 +54,7 @@ class MDV
             v_auto = 0;
             moteur.demarrerMoteur(WheelToRpm(v_auto));
             pFrein = 0;
-            pAcc = .81;
+            pAcc = 1;
             majInter();
         }
 
