@@ -1,7 +1,8 @@
 /**-----------------------------------------------
  * \author Abdel-Malik Bouhassoun
  * \date 26 Mai 2017
- * \file Ce header contient la classe intermédiaire Générale
+ * \file IntermediaireG.h
+ * \brief Ce header contient la classe intermédiaire Générale
  * Celle-ci permet de regroupper les informations utilisés par les différentes briques logicelles
  */
 
@@ -126,7 +127,7 @@ class IntermediaireG{
 
     //interaction véhicule
     /** \brief Retourne le rapport de conversion de la vitesse de rotation (avant-après) la boîte de vitesse
-     * \param[in] le rapport de vitesse dont l'on veut connaître le ratio.
+     * \param[in] rapport le rapport de vitesse dont l'on veut connaître le ratio.
      * \return Le coefficient du rapport (vitesse_moteur / vitesse_roue)
      */
     double getRapportBoiteDeVitesse(int rapport){
@@ -141,14 +142,14 @@ class IntermediaireG{
     };
 
     /** \brief Retourne la vitesse de la roue
-     * \Return La vitesse de la roue 'en ?WAIT'
+     * \return La vitesse de la roue 'en ?WAIT'
      */
     double getVitesseAngulaire(int i){
         return vitesseRoues[i];
     };
 
     /** \brief Retourne la vitesse de rotation du moteur
-     * \Return La vitesse du moteur 'en tour/minute'
+     * \return La vitesse du moteur 'en tour/minute'
      */
     double getRotationMoteur(){
         return rotationMoteur;
@@ -171,7 +172,7 @@ class IntermediaireG{
     };
 
     /** \brief calcul la puissance théorique du moteur en fonction du régime
-     * \param[in] Régime moteur 'en tour/minute'
+     * \param[in] r le régime moteur 'en tour/minute'
      * \return La puissance moteur 'en kW'
      */
     double getPuissanceMoteur(double r){
@@ -179,7 +180,7 @@ class IntermediaireG{
     };
 
     /** \brief calcul le couple théorique du moteur en fonction du régime
-     * \param[in] Régime moteur 'en tour/minute'
+     * \param[in] r le régime moteur 'en tour/minute'
      * \return Le couple moteur 'en N.m'
      */
     double getCoupleMoteur(double r){
@@ -187,7 +188,7 @@ class IntermediaireG{
     };
 
     /** \brief calcul la consommation théorique du moteur en fonction du régime
-     * \param[in] Régime moteur 'en tour/minute'
+     * \param[in] r le régime moteur 'en tour/minute'
      * \return La consommation spécifique'en g/kW.h'
      */
     double getConsommation(double r){
@@ -282,7 +283,7 @@ class IntermediaireG{
     }
 
      /** \brief Automatisation du calcul d'un polynôme (une variable) quelque soit le nombre du coefficients
-     * Le polynôme est représenté par un tableau de coefficients du degré n au degré 0.
+     * \details Le polynôme est représenté par un tableau de coefficients du degré n au degré 0.
      * \param[in] val La variable pour laquelle on calcul la valeur du polynôme
      * \param[in] coeffs un tableau contenant les coefficients du polynôme
      * \return La valeur du polynôme

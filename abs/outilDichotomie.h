@@ -1,7 +1,8 @@
 ﻿/**------------------------------
- * \Author Abdel-Malik Bouhassoun
+ * \author Abdel-Malik Bouhassoun
  * \date 29 Mai 2017
- * \file Ce header contient une énumération et une classe permettant de réaliser une méthode de dichotomie
+ * \file outilDichotomie.h
+ * \brief Ce header contient une énumération et une classe permettant de réaliser une méthode de dichotomie
  */
 
 #ifndef _outilDichotomie_h_

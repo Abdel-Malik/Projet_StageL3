@@ -1,7 +1,8 @@
 ﻿/**------------------------------
- * \Author Abdel-Malik Bouhassoun
+ * \author Abdel-Malik Bouhassoun
  * \date 29 Mai 2017
- * \file Ce header contient une classe roue ayant pour but d'être manipulée par l'ABS
+ * \file Roue.h
+ * \brief Ce header contient une classe roue ayant pour but d'être manipulée par l'ABS
  */
 
 #ifndef _Roue_h_

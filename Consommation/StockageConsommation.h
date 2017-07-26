@@ -1,7 +1,8 @@
 ﻿/**--------------------------------------------------------
  * \author Abdel-Malik Bouhassoun
  * \date 09 Mai 2017
- * \file Ce header contient deux classes utilisées pour le calcul de
+ * \file StockageConsommation.h
+ * \brief Ce header contient deux classes utilisées pour le calcul de
  * consommation d'un véhicule, (instantanée et moyenne)
  * ainsi que le calcul de ses émissions de CO2.
  */
@@ -98,7 +99,7 @@ class StockageConsommationInstantanee{
 //--*Classe 2 -Principale- SCG*--//
 /**\class StockageConsommationGeneral
 *\brief (SCG) sert à stocker les informations liées à la consommation du véhicule
-* Contient un tableau (historique) de consommations instantanées
+* \details Contient un tableau (historique) de consommations instantanées
 * ainsi que les données moyennes
 */
 class StockageConsommationGeneral{
@@ -125,7 +126,7 @@ class StockageConsommationGeneral{
     /*Méthodes*/
 
     /** \brief Réalise une moyenne de la consommation du véhicule
-    * on retransforme les anciennes moyennes en somme de valeurs (de poids 1)
+    * \details on retransforme les anciennes moyennes en somme de valeurs (de poids 1)
     * on ajoute les nouveaux relevés et on divise de manière à obtenir une nouvelle moyenne
     */
     void calculConsommationMoyenne(){
@@ -145,10 +146,11 @@ class StockageConsommationGeneral{
     }
 
 
-    /** \brief Réalise un calcul de la consommation du véhicule (à un instant t)
-     * on récupère les informations nécessaire à la création d'un SCI
-     * on modifie les indices de parcours pour la moyenne
-     * on calcule et stocke Q : la consommation en (l/h)
+    /** \brief (fonction principale) : Réalise un calcul de la consommation du véhicule (à un instant t)
+     * \details on récupère les informations nécessaire à la création d'un SCI,
+     * on ajout celui-ci au vecteur déjà existant.
+     * On modifie les indices de parcours pour la moyenne et,
+     * on calcule et stocke Q : la consommation en (l/h) dans le nouveau (SCI)
     */
     void calculConsommationInstantanee(){
         bool ralenti = ralentiMoteur();
@@ -161,7 +163,7 @@ class StockageConsommationGeneral{
     }
 
     /** \brief affichage de la consommation du véhicule
-    * l'affichage envoie une chaîne sur la sortie standard
+    * \details l'affichage envoie une chaîne sur la sortie standard
     * si la vitesse moyenne est très faible, le résultat est retourné en 'L/h'
     * sinon la valeur est retournée en 'L/100km'
     */
@@ -174,14 +176,14 @@ class StockageConsommationGeneral{
     }
 
     /** \brief affichage de la consommation intantannée du véhicule
-    * l'affichage envoie une chaîne sur la sortie standard
+    * \details l'affichage envoie une chaîne sur la sortie standard
     */
     void affichageConsommationInstantanee(){
         sci[sci.size()-1].affichageConsommationInstantanee();
     }
 
     /** \brief Réaliser un calcul du rejet moyen de CO2
-    * si la vitesse moyenne est très faible, le résultat est retourné en 'kg/h'
+    * \details si la vitesse moyenne est très faible, le résultat est retourné en 'kg/h'
     * sinon la valeur est retournée en 'kg/100km'
     */
     void calculRejetCO2(){

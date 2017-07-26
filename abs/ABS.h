@@ -1,7 +1,8 @@
 ﻿/**------------------------------
- * \Author Abdel-Malik Bouhassoun
+ * \author Abdel-Malik Bouhassoun
  * \date 29 Mai 2017
- * \file Ce header contient une modélisation du fonctionnement d'un système d'antiblocage de roues
+ * \file ABS.h
+ * \brief Ce header contient une modélisation du fonctionnement d'un système d'antiblocage de roues
  */
 
 #ifndef _ABS_h_
@@ -51,8 +52,8 @@ class ABS{
 
     /*méthodes publiques*/
 
-    /** \brief Simule le comportement de l'ABS en trois phases
-    * La phase 1 permet de détecter le besoin d'activer l'ABS. (boucle utilisé une seule fois)
+    /** \brief (Fonction principale) : Simule le comportement de l'ABS en trois phases
+    * \details La phase 1 permet de détecter le besoin d'activer l'ABS. (boucle utilisé une seule fois)
     * Le groupement des phases 2 et 3 assure le fonctionnement continuel de l'ABS Si
     * le véhicule roule et la pédale de frein reste enclenchée.
     */
@@ -79,7 +80,7 @@ class ABS{
     private:
 
     /** \brief vérifie l'absence de blocage des roues
-    * Une fois un blocage constaté,
+    * \details Une fois un blocage constaté,
     * un premier relachement des freins est executé puis la phase s'arrête
     */
     void phase1(){
@@ -96,7 +97,7 @@ class ABS{
     };
 
     /** \brief Réalise une dichotomie sur les roues ayant un glissement non optimal
-    * Après 3 boucles conservant un glissment optimal, cette phase s'arrête
+    * \details Après 3 boucles conservant un glissment optimal, cette phase s'arrête
     * Si la pédale est relaché, la phase s'arrête
     * \return (true) si la pédale a été relaché (false) sinon
     */
@@ -124,7 +125,7 @@ class ABS{
     };
 
     /** \brief Vérifie la conservation du glissement optimal ainsi que le besoin de freiner
-    * Si le conducteur lâche suffisamment la pédale, retourne (false).
+    * \details Si le conducteur lâche suffisamment la pédale, retourne (false).
     * Si le véhicule perd/gagne de l'adhérence les bornes sont réajustées, retourne (true)
     * \return booléen définissant si l'ABS est toujours actif. si (true) alors il y a eu une modification significative des valeurs de glissement des roues.
     */
@@ -189,7 +190,7 @@ class ABS{
     };
 
     /** \brief Mettre à jour les bornes sur lesquelles la dichotomie est réalisée
-    * boucle 1 : La roue à brusquement perdu de l'adhérence. Les nouvelles bornes sont : [0 - la pression actuelle (devenu trop importante)]
+    * \details boucle 1 : La roue à brusquement perdu de l'adhérence. Les nouvelles bornes sont : [0 - la pression actuelle (devenu trop importante)]
     * boucle 2 : La roue à brusquement gagné de l'adhérence. Les nouvelles bornes sont : [la pression actuelle (devenu trop faible) - 1]
     */
     void modifierBornes(){
@@ -202,7 +203,7 @@ class ABS{
     };
 
     /** \brief détecte un blocage des roues
-    * si le glissement d'une roue s'approche grandement de 1, alors elle est considérée bloquée.
+    * \details si le glissement d'une roue s'approche grandement de 1, alors elle est considérée bloquée.
     * \return (true) si au moins une roue est bloquée
     */
      //si le glissement d'une roue s'approche grandement de 1, alors elle est considérée bloquée.

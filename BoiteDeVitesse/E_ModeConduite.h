@@ -1,7 +1,8 @@
 /**-----------------------------------------------
  * \author Abdel-Malik Bouhassoun
  * \date 26 Mai 2017
- * \file Ce header contient une énumération des modes possibles.
+ * \file E_ModeConduite.h
+ * \brief Ce header contient une énumération des modes possibles.
  */
 #ifndef _E_ModeConduite_h_
 #define _E_ModeConduite_h_

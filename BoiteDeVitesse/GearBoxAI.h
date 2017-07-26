@@ -1,7 +1,8 @@
 /**-----------------------------------------------
  * \author Abdel-Malik Bouhassoun
  * \date 26 Mai 2017
- * \file [GearBoxAI.h]Ce header contient l'implémentation d'une boîte de vitesses
+ * \file GearBoxAI.h
+ * \brief Ce header contient l'implémentation d'une boîte de vitesses
  */
 
 #ifndef _GearAI_h_
@@ -42,8 +43,8 @@ class GearBoxAI{
 
     /*Méthodes publiques*/
 
-    /** \brief Fonction global réalisant l'appel de sous-fonctions
-    * le but final est d'obtenir la meilleure vitesse en fonction du mode effectif
+    /** \brief (Fonction principale) : Fonction global réalisant l'appel de sous-fonctions
+    * \details e but final est d'obtenir la meilleure vitesse en fonction du mode effectif
     * Cas spécial : Si la marche arrière est enclenchée, aucun test n'est effectué
     */
     void optimiserRapport(){
@@ -68,7 +69,7 @@ class GearBoxAI{
     private:
 
     /** \brief Copie les 'rapports de transmissions' dans un vector
-    * l'élément [0] correspond au rapport de la marche arrière
+    * \details l'élément [0] correspond au rapport de la marche arrière
     */
     void recuperationDesRapportsDeTransmissions(){
         for(int i = 0 ; i <=informations->getGearMax(); i++) //<>
@@ -90,7 +91,7 @@ class GearBoxAI{
     }
 
     /** \brief Vérifie que la vitesse engagée entraine une rotation moteur dans la plage de rotation dans laquelle il est fonctionnel.
-    * Si la rotation moteur devient trop faible/importante un changement de vitesse sera opéré avant tout autre test.
+    * \details Si la rotation moteur devient trop faible/importante un changement de vitesse sera opéré avant tout autre test.
     */
     void rapportCoherent(){
         double gearT = gear;
@@ -133,7 +134,7 @@ class GearBoxAI{
 
 
     /** \brief Retourne le rapport optimal maximisant la puissance fournie par le moteur
-     * \param [in] delta incrémente/décrémente le rapport de vitesse testé
+     * \param[in] delta incrémente/décrémente le rapport de vitesse testé
      * \return Le rapport[supérieur/inférieur] optimal
      */
     //Si aucun rapport optimal n'est trouvé, le rapport courant est retourné
