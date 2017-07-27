@@ -44,8 +44,6 @@ class IntermediaireG{
     //Données de l'instance du véhicule
     int gearMin;
     int gearMax;
-    double vitesseMin;
-    double vitesseMax;
     double regimeMin;
     double regimeMax;
     double consommationRalenti;
@@ -54,17 +52,37 @@ class IntermediaireG{
     bool ralentiMot = true;
     int currentGear;
     int nbRoues;
+
+    /**\brief le rayon des roues du vehicule 'en mètre'
+    * \details en temps normal, toutes les valeurs sont identiques.
+    */
     std::vector<double> rayonRoues;
     std::vector<double> rapportTransmission; //gear : R - 1 - 2 ...
 
     //Interaction Véhicule
+
+    /**\brief la vitesse du vehicule 'en m/s' */
     double vitesseVehicule;
+
+    /**\brief le régime moteur du vehicule 'en tr/min' */
     double rotationMoteur;
+
+    /**\brief la puissance fournie par le moteur 'en W' */
     double puissanceMoteur;
+
+    /**\brief la consommation du vehicule 'en g/kWh' */
     double consommation;
+
+    /**\brief l'information sur la pression sur l'accélérateur 'intervalle [0;1]' */
     double chargeMoteur;
+
+    /**\brief l'information sur la pression sur le frein 'intervalle [0;1]' */
     double chargeFrein;
+
+    /**\brief la vitesse des roues 'en tr/s' */
     std::vector<double> vitesseRoues;
+
+    /**\brief la pression de freinage appliqué sur chaque roue 'intervalle [0;1]' */
     std::vector<double> freinRoues;
 
     //--**Méthodes**--//
@@ -125,6 +143,14 @@ class IntermediaireG{
         return rayonRoues[i];
     };
 
+    /** \brief Met à jour la vitesse des roues du véhicule
+    */
+    void majVitesseRoues(){
+        for(unsigned int i = 0; i < nbRoues ; i++){
+            vitesseRoues[i] = 0;
+        }
+    }
+
     //interaction véhicule
     /** \brief Retourne le rapport de conversion de la vitesse de rotation (avant-après) la boîte de vitesse
      * \param[in] rapport le rapport de vitesse dont l'on veut connaître le ratio.
@@ -142,7 +168,7 @@ class IntermediaireG{
     };
 
     /** \brief Retourne la vitesse de la roue
-     * \return La vitesse de la roue 'en ?WAIT'
+     * \return La vitesse de la roue 'en tr/s'
      */
     double getVitesseAngulaire(int i){
         return vitesseRoues[i];
@@ -168,7 +194,7 @@ class IntermediaireG{
         return consommation;
     };
     double getConsoRalenti(){
-        return 3.48;
+        return consommationRalenti;
     };
 
     /** \brief calcul la puissance théorique du moteur en fonction du régime
@@ -258,8 +284,6 @@ class IntermediaireG{
         }
     }
     void recuperationsInformationsMoteur(){
-        vitesseMin = 0;
-        vitesseMax = 123.26;
         regimeMin = 800;
         regimeMax = 2500;
         consommationRalenti = 3.48;

@@ -8,15 +8,13 @@
 #ifndef _ABS_h_
 #define _ABS_h_
 
-
 #include <iostream>
 #include <vector>
 #include <math.h>
 #include <string.h>
 #include <windows.h>
 #include "Roue.h"
-#include "../IntermediaireG/IntermediaireG.h"
-#define NB_ROUES (4)
+#include "../Intermediaire/IntermediaireG.h"
 
 //--**********************************--/
 //--*****   definition Classe    *****--/
@@ -29,7 +27,7 @@
 class ABS{
 
     //--attributs--//
-    IntermediaireG i = IntermediaireG();
+    IntermediaireG* inter;
     std::vector<Roue> rouesVehicule;
     std::vector<int> rouesASerrer;
     std::vector<int> rouesARelacher;
@@ -45,9 +43,10 @@ class ABS{
     //--Méthodes--//
     public:
     /*Constructeurs*/
-    ABS(){
-        chargeFrein = i.getChargeFrein();
-        initialiserRoues(i.getNbRoues());
+    ABS(IntermediaireG* i){
+        inter = i;
+        chargeFrein = inter->getChargeFrein();
+        initialiserRoues(inter->getNbRoues());
     };
 
     /*méthodes publiques*/
@@ -63,12 +62,12 @@ class ABS{
         do{
             if(phase2()){
                 for(unsigned int i = 0 ; i < rouesVehicule.size() ; i++){ //signifie un relachement partiel de la pédale, l'ABS se désactive et restitue la valeur de freinage imposé par le conducteur
-                    rouesVehicule[i].setFreinageRoue(this->i.getChargeFrein());
+                    rouesVehicule[i].setFreinageRoue(inter->getChargeFrein());
                 }
                 break;
             }
             fonctionnementABS = phase3();
-        }while(fonctionnementABS && (this->i.getVitesse()>1)); //getVitesse (m/s) ; 1m/s => 3.6 km/h
+        }while(fonctionnementABS && (inter->getVitesse()>1)); //getVitesse (m/s) ; 1m/s => 3.6 km/h
     };
 
     /*getter*/
@@ -89,9 +88,9 @@ class ABS{
             calculGlissement();
         }while(!blocageRoues());
             calculGlissement();
-            chargeFrein = this->i.getChargeFrein();
+            chargeFrein = inter->getChargeFrein();
         for(unsigned int i = 0 ; i < rouesVehicule.size() ; i++){
-            this->i.setFreinageRoue(chargeFrein,i);
+            inter->setFreinageRoue(chargeFrein,i);
         }
         relacherRoues();
     };
@@ -115,7 +114,7 @@ class ABS{
                 relacherRoues();
                 serrerRoues();
             }
-            chrgFrein2 = this->i.getChargeFrein();
+            chrgFrein2 = inter->getChargeFrein();
             if((chargeFrein-chrgFrein2)>0.08){ //relachement de plus de 8% de la course de la pédale => volonté de désactiver l'ABS
                 chargeFrein = chrgFrein2;
                 pedale = true;
@@ -136,8 +135,8 @@ class ABS{
             Sleep(40);
             calculGlissement();
             glissementNonOptimal();
-            chrgFrein2 = this->i.getChargeFrein();
-            if((chargeFrein-chrgFrein2)>0.08 || (this->i.getVitesse()<1)){
+            chrgFrein2 = inter->getChargeFrein();
+            if((chargeFrein-chrgFrein2)>0.08 || (inter->getVitesse()<1)){
                 chgmtGliss = false;
                 chargeFrein = chrgFrein2;
                 break;
@@ -155,17 +154,17 @@ class ABS{
      */
     void initialiserRoues(int n){
         for(int i = 0 ; i < n ; i++)
-            rouesVehicule.push_back(Roue(this->i.getRayonRoues(i),&(this->i),i));
+            rouesVehicule.push_back(Roue(inter->getRayonRoues(i),inter,i));
     };
 
     /** \brief calcule le glissement de chaque roue au moment de l'appel.
      */
     //Met à jour la vitesse angulaire des roues, appel d'une methode[classe Roue] calculant le glissement pour une vitesse donnée en paramêtre
     void calculGlissement(){
-        this->i.majDonnees();
+        inter->majVitesseRoues();
         for(unsigned int i = 0 ; i < rouesVehicule.size() ; i++){
-            rouesVehicule[i].majDonnees(&(this->i));
-            rouesVehicule[i].glissementRoue(this->i.getVitesse()); //Vitesse du véhicule en paramètre
+            rouesVehicule[i].majDonnees(inter);
+            rouesVehicule[i].glissementRoue(inter->getVitesse()); //Vitesse du véhicule en paramètre
         }
     };
 
@@ -223,7 +222,7 @@ class ABS{
     void relacherRoues(){
         for(int& r : rouesARelacher){
             rouesVehicule[r].dichotomie(ChangementPression::RELACHER);
-            i.setFreinageRoue(r,rouesVehicule[r].pressionAppliquee());
+            inter->setFreinageRoue(r,rouesVehicule[r].pressionAppliquee());
         }
         rouesARelacher.resize(0);
     };
@@ -233,7 +232,7 @@ class ABS{
     void serrerRoues(){
         for(int& r : rouesASerrer){
             rouesVehicule[r].dichotomie(ChangementPression::SERRER);
-            i.setFreinageRoue(r,rouesVehicule[r].pressionAppliquee());
+            inter->setFreinageRoue(r,rouesVehicule[r].pressionAppliquee());
         }
         rouesASerrer.resize(0);
     };

@@ -1,6 +1,7 @@
 #include <iostream>
 #include "ModeleVehicule/MDV.h"
 #include "BoiteDeVitesse/GearBoxAI.h"
+#include "abs/ABS.h"
 #include "Consommation/StockageConsommation.h"
 using namespace std;
 
@@ -10,6 +11,7 @@ int main()
     IntermediaireG* i = vehicule.getI();
     vehicule.fct();
     GearBoxAI gb = GearBoxAI(i);
+    ABS abs = ABS(i);
     StockageConsommationGeneral scg = StockageConsommationGeneral(i);
     bool b = false;
     for(int i =0; i <200; i++){

@@ -8,7 +8,7 @@
 #ifndef _Roue_h_
 #define _Roue_h_
 
-#include "../IntermediaireG/IntermediaireG.h"
+#include "../Intermediaire/IntermediaireG.h"
 #include "outilDichotomie.h"
 
 //--************************************--//
@@ -81,6 +81,8 @@ class Roue{
         return glissement;
     };
 
+    /**\brief revoie la pression de freinage à appliquer à la roue
+    */
     double pressionAppliquee(){
         return bornes.getIndex();
     };
@@ -101,8 +103,9 @@ class Roue{
         bornes.setSup(f);
     }
 
-    /** \brief mettre à jour l'intervalle d'exécution de la dichotomie (zone augmentant l'intervalle de pressions applicable)
-     */
+    /** \brief met à jour la vitesse de la roue
+    * \param[in] inter un pointeur vers l'objet contenant l'information de vitesse
+    */
     void majDonnees(IntermediaireG* inter){
         vitesseAngulaire = (*inter).getVitesseAngulaire(noRoue);
     };
